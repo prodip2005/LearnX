@@ -1,0 +1,35 @@
+/* Features.module.css */
+.section {
+  position: relative;
+  padding: 6rem 1.5rem; /* py-24 px-6 */
+  overflow: hidden;
+  background-color: white;
+}
+
+@media (min-width: 768px) {
+  .section { padding-left: 5rem; padding-right: 5rem; }
+}
+
+@media (min-width: 1024px) {
+  .section { padding-left: 10rem; padding-right: 10rem; }
+}
+
+.bgEffect {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(31, 187, 50, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.floatCard {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
