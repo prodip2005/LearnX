@@ -65,8 +65,7 @@ const ExamsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafbfc] pb-20">
-      {/* ১. প্রিমিয়াম হিরো সেকশন */}
+    <div className="min-h-screen max-w-310 mx-auto bg-[#fafbfc] pb-20">
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 space-y-6">
@@ -114,8 +113,6 @@ const ExamsPage = () => {
           </div>
         </div>
       </div>
-
-    
 
       <JoinModal
         isOpen={isJoinModalOpen}

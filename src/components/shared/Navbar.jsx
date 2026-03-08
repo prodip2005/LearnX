@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation'; // এটি বর্তমান পাথ ট্র্যাক করার জন্য
+import { usePathname } from 'next/navigation';
 import { auth } from '@/lib/firebase.init';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import Swal from 'sweetalert2';
@@ -12,7 +12,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
-  const pathname = usePathname(); // বর্তমান ইউআরএল পাথ (যেমন: '/tutors')
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -77,7 +77,7 @@ const Navbar = () => {
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href; // বর্তমান পাথের সাথে লিঙ্কের মিল আছে কি না
+              const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
@@ -98,6 +98,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-4">
               {firebaseUser ? (
                 <div className="flex items-center gap-4">
+                  {/* Dashboard Link */}
                   <Link
                     href="/dashboard"
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all duration-300 ${
@@ -109,6 +110,17 @@ const Navbar = () => {
                     <LayoutDashboard size={18} /> Dashboard
                   </Link>
 
+                  {/* Role Condition: Only show 'Be a Student' if role is 'user' */}
+                  {dbUser?.role === 'user' && (
+                    <Link
+                      href="/become-student"
+                      className="bg-[#1fbb32] text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-[#1fbb32]/20 hover:bg-[#19a32b] active:scale-95 transition-all"
+                    >
+                      Be a Student
+                    </Link>
+                  )}
+
+                  {/* Profile Info */}
                   <div className="flex items-center gap-2 group cursor-pointer">
                     <div className="relative w-10 h-10 overflow-hidden rounded-full border-2 border-[#1fbb32]/20 shadow-sm">
                       <Image
@@ -197,6 +209,9 @@ const Navbar = () => {
             >
               <LayoutDashboard size={20} /> Go to Dashboard
             </Link>
+
+            {/* Mobile Be a Student Condition */}
+
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -217,6 +232,15 @@ const Navbar = () => {
           </div>
 
           <div className="pt-2">
+            {dbUser?.role === 'user' && (
+              <Link
+                href="/become-student"
+                onClick={() => setIsOpen(false)}
+                className="flex mb-2 items-center justify-center gap-3 px-4 py-3 font-bold rounded-xl text-white bg-[#1fbb32]"
+              >
+                Be a Student
+              </Link>
+            )}
             {firebaseUser ? (
               <button
                 onClick={handleLogout}

@@ -12,7 +12,6 @@ import {
 import Image from 'next/image';
 
 const StudentDashboard = () => {
-  // স্টুডেন্টের ডামি ডাটা (পরবর্তীতে ডাটাবেস থেকে আনতে পারবেন)
   const stats = [
     {
       title: 'Enrolled Exams',
