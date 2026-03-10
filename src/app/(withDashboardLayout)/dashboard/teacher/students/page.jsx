@@ -48,7 +48,7 @@ const AllStudents = () => {
           title: 'Approved!',
           text: 'Student access has been granted.',
           icon: 'success',
-          confirmButtonColor: '#1fbb32',
+          confirmButtonColor: 'var(--color-primary)',
         });
         fetchStudents();
       }
@@ -91,7 +91,7 @@ const AllStudents = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1fbb32]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
 
@@ -113,14 +113,14 @@ const AllStudents = () => {
           onClick={() => setActiveTab('all')}
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
             activeTab === 'all'
-              ? 'bg-white text-[#1fbb32] shadow-sm'
+              ? 'bg-white text-primary shadow-sm'
               : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Users size={18} />
           Current Students
           <span
-            className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === 'all' ? 'bg-[#1fbb32]/10 text-[#1fbb32]' : 'bg-slate-300 text-slate-600'}`}
+            className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === 'all' ? 'bg-primary/10 text-primary' : 'bg-slate-300 text-slate-600'}`}
           >
             {students.filter((s) => s.status === true).length}
           </span>
@@ -129,14 +129,14 @@ const AllStudents = () => {
           onClick={() => setActiveTab('applied')}
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
             activeTab === 'applied'
-              ? 'bg-white text-[#1fbb32] shadow-sm'
+              ? 'bg-white text-primary shadow-sm'
               : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Clock size={18} />
           Pending Applications
           <span
-            className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === 'applied' ? 'bg-[#1fbb32]/10 text-[#1fbb32]' : 'bg-slate-300 text-slate-600'}`}
+            className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === 'applied' ? 'bg-primary/10 text-primary' : 'bg-slate-300 text-slate-600'}`}
           >
             {students.filter((s) => s.status === false).length}
           </span>
@@ -171,7 +171,7 @@ const AllStudents = () => {
                 >
                   <td className="p-5">
                     <div className="flex flex-col">
-                      <span className="font-bold text-slate-700 group-hover:text-[#1fbb32] transition-colors">
+                      <span className="font-bold text-slate-700 group-hover:text-primary transition-colors">
                         {student.fullName}
                       </span>
                       <span className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
@@ -249,14 +249,14 @@ const AllStudents = () => {
             onClick={() => setSelectedStudent(null)}
           />
           <div className="bg-white w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl relative z-10 animate-in fade-in zoom-in duration-300 border border-white">
-            <div className="h-32 bg-gradient-to-br from-[#1fbb32] to-[#16a34a] p-8 flex items-end relative">
+            <div className="h-32 bg-gradient-to-br from-primary to-primary-hover p-8 flex items-end relative">
               <button
                 onClick={() => setSelectedStudent(null)}
                 className="absolute top-6 right-6 p-2 bg-white/20 hover:bg-white/40 text-white rounded-full transition-all"
               >
                 <X size={20} />
               </button>
-              <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#1fbb32] absolute -bottom-10 left-8 border-4 border-white">
+              <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-primary absolute -bottom-10 left-8 border-4 border-white">
                 <Users size={36} strokeWidth={2.5} />
               </div>
             </div>
@@ -266,15 +266,15 @@ const AllStudents = () => {
                 {selectedStudent.fullName}
               </h2>
               <div className="flex items-center gap-2 mt-1">
-                <span className="w-2 h-2 rounded-full bg-[#1fbb32] animate-pulse"></span>
-                <span className="text-xs font-bold text-[#1fbb32] uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span className="text-xs font-bold text-primary uppercase tracking-widest">
                   {selectedStudent.role}
                 </span>
               </div>
 
               <div className="mt-8 space-y-5">
                 <div className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1fbb32]/10 group-hover:text-[#1fbb32] transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                     <School size={18} />
                   </div>
                   <div>
@@ -288,7 +288,7 @@ const AllStudents = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-4 group">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1fbb32]/10 group-hover:text-[#1fbb32] transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                       <Hash size={18} />
                     </div>
                     <div>
@@ -301,7 +301,7 @@ const AllStudents = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-4 group">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1fbb32]/10 group-hover:text-[#1fbb32] transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                       <Users size={18} />
                     </div>
                     <div>
@@ -315,7 +315,7 @@ const AllStudents = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1fbb32]/10 group-hover:text-[#1fbb32] transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                     <Phone size={18} />
                   </div>
                   <div>
@@ -328,7 +328,7 @@ const AllStudents = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1fbb32]/10 group-hover:text-[#1fbb32] transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                     <Mail size={18} />
                   </div>
                   <div>
@@ -353,7 +353,7 @@ const AllStudents = () => {
                       handleAccept(selectedStudent._id);
                       setSelectedStudent(null);
                     }}
-                    className="bg-[#1fbb32] text-white px-5 py-2 rounded-xl text-xs font-black shadow-lg shadow-[#1fbb32]/20 hover:scale-105 active:scale-95 transition-all"
+                    className="bg-primary text-white px-5 py-2 rounded-xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                   >
                     Approve Now
                   </button>

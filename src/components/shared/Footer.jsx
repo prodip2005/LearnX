@@ -18,19 +18,19 @@ const Footer = () => {
           {/* Navigation Links */}
           <div className="flex gap-8 text-sm font-medium">
             <a
-              className="hover:text-[#1fbb32] transition-colors cursor-pointer"
+              className="hover:text-primary transition-colors cursor-pointer"
               href="#"
             >
               Privacy Policy
             </a>
             <a
-              className="hover:text-[#1fbb32] transition-colors cursor-pointer"
+              className="hover:text-primary transition-colors cursor-pointer"
               href="#"
             >
               Terms of Service
             </a>
             <a
-              className="hover:text-[#1fbb32] transition-colors cursor-pointer"
+              className="hover:text-primary transition-colors cursor-pointer"
               href="#"
             >
               Contact Us

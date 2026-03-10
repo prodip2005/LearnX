@@ -37,21 +37,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9] flex items-center justify-center py-12 px-4 selection:bg-[#1fbb32]/30">
+    <div className="min-h-screen bg-[#f1f5f9] flex items-center justify-center py-12 px-4 selection:bg-primary/30">
       <div className="max-w-4xl w-full bg-white rounded-[3rem] shadow-[0_20px_50px_rgba(31,187,50,0.1)] border border-white overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         {/* Left Side: Illustration Section */}
         <div className="hidden md:flex w-[45%] bg-[#0f172a] p-12 flex-col justify-between relative overflow-hidden text-white">
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#1fbb32] rounded-full blur-[100px] opacity-20"></div>
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#1fbb32] rounded-full blur-[100px] opacity-20"></div>
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary rounded-full blur-[100px] opacity-20"></div>
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary rounded-full blur-[100px] opacity-20"></div>
           <div className="relative z-10">
-            <Link href="/" className="flex items-center gap-2 text-[#1fbb32]">
+            <Link href="/" className="flex items-center gap-2 text-primary">
               <GraduationCap size={45} strokeWidth={2.5} />
               <span className="text-3xl font-black text-white">LearnX</span>
             </Link>
           </div>
           <div className="relative z-10 space-y-6">
-            <div className="bg-[#1fbb32]/10 border border-[#1fbb32]/20 p-4 rounded-2xl backdrop-blur-md">
-              <LogIn className="text-[#1fbb32] mb-2" size={24} />
+            <div className="bg-primary/10 border border-primary/20 p-4 rounded-2xl backdrop-blur-md">
+              <LogIn className="text-primary mb-2" size={24} />
               <h3 className="text-xl font-bold">Welcome Back!</h3>
               <p className="text-slate-400 text-sm">
                 Log in to continue your premium learning journey.
@@ -59,7 +59,7 @@ const Login = () => {
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-sm text-slate-300">
-                <ShieldCheck size={18} className="text-[#1fbb32]" /> Secure
+                <ShieldCheck size={18} className="text-primary" /> Secure
                 Access
               </div>
             </div>
@@ -85,7 +85,7 @@ const Login = () => {
               </label>
               <div className="relative group">
                 <Mail
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1fbb32]"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary"
                   size={20}
                 />
                 <input
@@ -95,7 +95,7 @@ const Login = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:bg-white focus:border-[#1fbb32] outline-none text-sm font-medium"
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:bg-white focus:border-primary outline-none text-sm font-medium"
                   placeholder="alex@example.com"
                 />
               </div>
@@ -109,14 +109,14 @@ const Login = () => {
                 <Link
                   href="/forgot-password"
                   size={18}
-                  className="text-xs font-bold text-[#1fbb32] hover:underline"
+                  className="text-xs font-bold text-primary hover:underline"
                 >
                   Forgot?
                 </Link>
               </div>
               <div className="relative group">
                 <Lock
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1fbb32]"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary"
                   size={20}
                 />
                 <input
@@ -126,7 +126,7 @@ const Login = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="w-full h-14 pl-12 pr-12 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:bg-white focus:border-[#1fbb32] outline-none text-sm font-medium"
+                  className="w-full h-14 pl-12 pr-12 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:bg-white focus:border-primary outline-none text-sm font-medium"
                   placeholder="••••••••"
                 />
                 <button
@@ -143,7 +143,7 @@ const Login = () => {
               type="submit"
               disabled={loading}
               className={`w-full flex items-center justify-center gap-3 h-16 text-white text-lg font-black rounded-2xl transition-all shadow-xl ${
-                loading ? 'bg-slate-300' : 'bg-[#1fbb32] hover:bg-[#16a34a]'
+                loading ? 'bg-slate-300' : 'bg-primary hover:bg-primary-hover'
               }`}
             >
               {loading ? 'Signing In...' : 'Sign In Now'}{' '}
@@ -177,7 +177,7 @@ const Login = () => {
               New to LearnX?{' '}
               <Link
                 href="/register"
-                className="text-[#1fbb32] hover:underline font-black"
+                className="text-primary hover:underline font-black"
               >
                 Create Account
               </Link>

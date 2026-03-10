@@ -34,13 +34,13 @@ const FeaturesSection = () => {
       <div className="mx-auto max-w-[1200px] relative">
         {/* Section Header */}
         <div className="mb-20 text-center flex flex-col items-center">
-          <span className="text-[#1fbb32] font-bold text-sm tracking-widest uppercase mb-4">
+          <span className="text-primary font-bold text-sm tracking-widest uppercase mb-4">
             Our Advantages
           </span>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6 text-[#0f172a]">
             Why Choose LearnX?
           </h2>
-          <div className="w-20 h-1.5 bg-[#1fbb32] rounded-full mb-6"></div>
+          <div className="w-20 h-1.5 bg-primary rounded-full mb-6"></div>
           <p className="text-[#475569] max-w-2xl text-lg">
             We provide the most advanced digital learning tools and personalized
             support to ensure every student reaches their full potential.
@@ -53,17 +53,17 @@ const FeaturesSection = () => {
             <div
               key={index}
               style={{ animationDelay: feature.delay }}
-              className={`bg-[#f8fafc] p-10 rounded-[2.5rem] shadow-xl border border-transparent hover:border-[#1fbb32]/20 hover:bg-white hover:shadow-2xl hover:shadow-[#1fbb32]/10 transition-all duration-500 group ${styles.floatCard}`}
+              className={`bg-[#f8fafc] p-10 rounded-[2.5rem] shadow-xl border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group ${styles.floatCard}`}
             >
               {/* Icon Container */}
-              <div className="w-20 h-20 rounded-[2rem] bg-[#e8f8eb] flex items-center justify-center mb-10 transition-all duration-500 shadow-sm group-hover:bg-[#1fbb32]">
-                <div className="text-[#1fbb32] group-hover:text-white transition-colors duration-500 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-[2rem] bg-primary-accent flex items-center justify-center mb-10 transition-all duration-500 shadow-sm group-hover:bg-primary">
+                <div className="text-primary group-hover:text-white transition-colors duration-500 flex items-center justify-center">
                   {feature.icon}
                 </div>
               </div>
 
               {/* Content */}
-              <h3 className="text-2xl font-extrabold mb-4 text-[#0f172a] group-hover:text-[#1fbb32] transition-colors">
+              <h3 className="text-2xl font-extrabold mb-4 text-[#0f172a] group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
               <p className="text-[#64748b] leading-relaxed text-lg">

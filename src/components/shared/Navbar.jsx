@@ -74,9 +74,9 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#1fbb32]/10 bg-white/80 backdrop-blur-md px-6 md:px-20 lg:px-40 py-3">
+      <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/80 backdrop-blur-md px-6 md:px-20 lg:px-40 py-3">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-[#1fbb32]">
+          <Link href="/" className="flex items-center gap-2 text-primary">
             <GraduationCap size={38} strokeWidth={2.5} />
             <h2 className="text-2xl font-black tracking-tighter text-[#0f172a]">
               LearnX
@@ -93,8 +93,8 @@ const Navbar = () => {
                   href={link.href}
                   className={`text-[15px] font-bold transition-colors ${
                     isActive
-                      ? 'text-[#1fbb32]'
-                      : 'text-[#475569] hover:text-[#1fbb32]'
+                      ? 'text-primary'
+                      : 'text-[#475569] hover:text-primary'
                   }`}
                 >
                   {link.name}
@@ -112,8 +112,8 @@ const Navbar = () => {
                     href={getDashboardLink()}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all duration-300 ${
                       pathname.startsWith('/dashboard')
-                        ? 'bg-[#1fbb32] text-white border-[#1fbb32]'
-                        : 'bg-[#f0fdf4] text-[#1fbb32] border-[#1fbb32]/20 hover:bg-[#1fbb32] hover:text-white'
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-primary-light text-primary border-primary/20 hover:bg-primary hover:text-white'
                     }`}
                   >
                     <LayoutDashboard size={18} /> Dashboard
@@ -123,7 +123,7 @@ const Navbar = () => {
                   {dbUser?.role === 'user' && (
                     <Link
                       href="/become-student"
-                      className="bg-[#1fbb32] text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-[#1fbb32]/20 hover:bg-[#19a32b] active:scale-95 transition-all"
+                      className="bg-primary text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:bg-primary-hover active:scale-95 transition-all"
                     >
                       Be a Student
                     </Link>
@@ -131,7 +131,7 @@ const Navbar = () => {
 
                   {/* Profile Info */}
                   <div className="flex items-center gap-2 group cursor-pointer">
-                    <div className="relative w-10 h-10 overflow-hidden rounded-full border-2 border-[#1fbb32]/20 shadow-sm">
+                    <div className="relative w-10 h-10 overflow-hidden rounded-full border-2 border-primary/20 shadow-sm">
                       <Image
                         src={userImage}
                         alt="Profile"
@@ -145,7 +145,7 @@ const Navbar = () => {
                         {userName}
                       </span>
                       {dbUser?.role && (
-                        <span className="text-[10px] font-bold text-[#1fbb32] uppercase tracking-tighter">
+                        <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">
                           {dbUser.role}
                         </span>
                       )}
@@ -163,14 +163,14 @@ const Navbar = () => {
                 <div className="flex items-center gap-2">
                   <Link
                     href="/login"
-                    className={`px-4 py-2 text-sm font-bold transition-colors ${pathname === '/login' ? 'text-[#1fbb32]' : 'text-slate-600'}`}
+                    className={`px-4 py-2 text-sm font-bold transition-colors ${pathname === '/login' ? 'text-primary' : 'text-slate-600'}`}
                   >
                     Login
                     </Link>
                     {dbUser?.role === 'user' && (
                       <Link
                         href="/become-student"
-                        className="bg-[#1fbb32] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#1fbb32]/20 active:scale-95 transition-all"
+                        className="bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all"
                       >
                         Be a Student
                       </Link>
@@ -194,7 +194,7 @@ const Navbar = () => {
         >
           {firebaseUser && (
             <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <div className="relative w-14 h-14 overflow-hidden rounded-full border-2 border-[#1fbb32]">
+              <div className="relative w-14 h-14 overflow-hidden rounded-full border-2 border-primary">
                 <Image
                   src={userImage}
                   alt="Profile"
@@ -205,7 +205,7 @@ const Navbar = () => {
               </div>
               <div>
                 <p className="text-lg font-black text-[#0f172a]">{userName}</p>
-                <p className="text-xs font-bold text-[#1fbb32] uppercase">
+                <p className="text-xs font-bold text-primary uppercase">
                   {dbUser?.role || 'user'}
                 </p>
               </div>
@@ -216,7 +216,7 @@ const Navbar = () => {
             <Link
               href={getDashboardLink()}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl ${pathname.startsWith('/dashboard') ? 'bg-[#1fbb32] text-white' : 'text-[#1fbb32] bg-[#f0fdf4]'}`}
+              className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl ${pathname.startsWith('/dashboard') ? 'bg-primary text-white' : 'text-primary bg-primary-light'}`}
             >
               <LayoutDashboard size={20} /> Go to Dashboard
             </Link>
@@ -230,7 +230,7 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className={`px-4 py-3 font-bold rounded-xl transition-colors ${
                     isActive
-                      ? 'text-[#1fbb32] bg-[#f0fdf4]'
+                      ? 'text-primary bg-primary-light'
                       : 'text-[#334155] hover:bg-slate-50'
                   }`}
                 >
@@ -245,7 +245,7 @@ const Navbar = () => {
               <Link
                 href="/become-student"
                 onClick={() => setIsOpen(false)}
-                className="flex mb-2 items-center justify-center gap-3 px-4 py-3 font-bold rounded-xl text-white bg-[#1fbb32]"
+                className="flex mb-2 items-center justify-center gap-3 px-4 py-3 font-bold rounded-xl text-white bg-primary"
               >
                 Be a Student
               </Link>
@@ -262,14 +262,14 @@ const Navbar = () => {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className={`w-full py-4 text-center font-bold border rounded-2xl ${pathname === '/login' ? 'text-[#1fbb32] border-[#1fbb32] bg-[#f0fdf4]' : 'text-[#334155] border-slate-200'}`}
+                  className={`w-full py-4 text-center font-bold border rounded-2xl ${pathname === '/login' ? 'text-primary border-primary bg-primary-light' : 'text-[#334155] border-slate-200'}`}
                 >
                   Login
                 </Link>
                 <Link
                   href="/become-student"
                   onClick={() => setIsOpen(false)}
-                  className="w-full bg-[#1fbb32] text-white py-4 text-center rounded-2xl font-bold"
+                  className="w-full bg-primary text-white py-4 text-center rounded-2xl font-bold"
                 >
                   Be a Student
                 </Link>

@@ -48,8 +48,8 @@ const TeacherDashboard = () => {
       value: loading ? '...' : exams.length,
       icon: <FileText size={20} />,
       trend: 'Real-time',
-      color: 'text-[#1fbb32]',
-      bg: 'bg-[#f0fdf4]',
+      color: 'text-primary',
+      bg: 'bg-primary-light',
     },
     {
       title: 'Avg. Score',
@@ -90,7 +90,7 @@ const TeacherDashboard = () => {
             <input
               type="text"
               placeholder="Search data..."
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-[#1fbb32] w-64"
+              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary w-64"
             />
           </div>
           <Bell className="text-slate-400 cursor-pointer" size={20} />
@@ -132,7 +132,7 @@ const TeacherDashboard = () => {
             </h3>
             <Link
               href="/dashboard/teacher/create-exam"
-              className="text-sm font-bold text-[#1fbb32] hover:underline"
+              className="text-sm font-bold text-primary hover:underline"
             >
               View All
             </Link>
@@ -183,7 +183,7 @@ const TeacherDashboard = () => {
                         {exam.questions?.length || 0}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-[10px] font-bold px-2 py-1 rounded-md uppercase bg-green-100 text-green-600">
+                        <span className="text-[10px] font-bold px-2 py-1 rounded-md uppercase bg-primary-light text-primary">
                           Active
                         </span>
                       </td>
@@ -200,7 +200,7 @@ const TeacherDashboard = () => {
 
         {/* ডান পাশ: অ্যাকশন কার্ড */}
         <div className="space-y-6">
-          <div className="bg-[#1fbb32] p-8 rounded-2xl text-white relative overflow-hidden shadow-lg shadow-[#1fbb32]/20">
+          <div className="bg-primary p-8 rounded-2xl text-white relative overflow-hidden shadow-lg shadow-primary/20">
             <div className="relative z-10">
               <h3 className="text-lg font-bold mb-2">Create New Exam</h3>
               <p className="text-white/80 text-xs mb-6 leading-relaxed">
@@ -208,7 +208,7 @@ const TeacherDashboard = () => {
               </p>
               <Link
                 href="/dashboard/teacher/create-exam/new"
-                className="w-full py-3 bg-white text-[#1fbb32] rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-white text-primary rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
               >
                 Get Started <ArrowUpRight size={16} />
               </Link>

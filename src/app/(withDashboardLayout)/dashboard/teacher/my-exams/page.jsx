@@ -79,7 +79,7 @@ const AllExamsByTheTeacher = () => {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <Loader2 className="animate-spin text-[#1fbb32] mb-2" size={32} />
+        <Loader2 className="animate-spin text-primary mb-2" size={32} />
         <p className="text-slate-500 font-medium italic">
           Loading your classrooms...
         </p>
@@ -105,7 +105,7 @@ const AllExamsByTheTeacher = () => {
         {exams.map((exam) => (
           <div
             key={exam._id}
-            className="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-[#1fbb32]/10 transition-all duration-500 group relative"
+            className="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group relative"
           >
             {/* Room Code Badge */}
             <div className="absolute top-6 right-20 bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
@@ -113,7 +113,7 @@ const AllExamsByTheTeacher = () => {
             </div>
 
             <div className="p-8 pb-0 flex justify-between items-start">
-              <div className="w-14 h-14 bg-[#1fbb32]/10 text-[#1fbb32] rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                 <BookOpen size={28} />
               </div>
               <button
@@ -126,7 +126,7 @@ const AllExamsByTheTeacher = () => {
             </div>
 
             <div className="p-8">
-              <h3 className="text-xl font-black text-slate-800 mb-2 line-clamp-1 group-hover:text-[#1fbb32] transition-colors">
+              <h3 className="text-xl font-black text-slate-800 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
                 {exam.examTitle}
               </h3>
               <p className="text-xs text-slate-400 font-bold mb-6 flex items-center gap-1 uppercase">

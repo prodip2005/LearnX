@@ -69,12 +69,12 @@ const ExamsPage = () => {
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-100 text-[#1fbb32] text-[10px] font-black tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-100 text-primary text-[10px] font-black tracking-widest uppercase">
               <Sparkles size={12} /> Best Online Assessment Platform
             </div>
             <h1 className="text-4xl md:text-6xl font-black text-slate-800 leading-[1.1]">
               The smartest way to <br />
-              <span className="text-[#1fbb32]">test your skills.</span>
+              <span className="text-primary">test your skills.</span>
             </h1>
             <p className="text-slate-500 text-lg font-medium max-w-lg">
               Participate in live exams with real-time ranking and detailed
@@ -83,7 +83,7 @@ const ExamsPage = () => {
             <div className="flex flex-wrap gap-4 pt-4">
               <button
                 onClick={() => setIsJoinModalOpen(true)}
-                className="group flex items-center gap-3 bg-[#1fbb32] text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-[#1fbb32]/20 hover:bg-[#19a32b] hover:-translate-y-1 transition-all"
+                className="group flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-primary/20 hover:bg-primary-hover hover:-translate-y-1 transition-all"
               >
                 <PlayCircle
                   size={20}
@@ -96,8 +96,8 @@ const ExamsPage = () => {
 
           {/* স্ট্যাটাস ওভারভিউ কার্ডস - পেজ ভরা ভরাট দেখাবে */}
           <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-            <div className="bg-[#f0fdf4] p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center">
-              <Users className="text-[#1fbb32] mb-3" size={32} />
+            <div className="bg-primary-light p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center">
+              <Users className="text-primary mb-3" size={32} />
               <h4 className="text-2xl font-black text-slate-800">50K+</h4>
               <p className="text-slate-500 text-xs font-bold uppercase tracking-tighter">
                 Active Students

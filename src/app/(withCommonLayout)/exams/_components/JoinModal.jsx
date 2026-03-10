@@ -69,7 +69,7 @@ const JoinModal = ({
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className="w-11 h-12 text-center border rounded text-lg font-semibold outline-none 
-                focus:border-[#1fbb32]"
+                focus:border-primary"
               />
 
               {index === 2 && (
@@ -82,8 +82,8 @@ const JoinModal = ({
         <button
           onClick={onJoin}
           disabled={loading || roomCode.length < 6}
-          className="w-full bg-[#1fbb32] text-white py-3 rounded font-semibold
-          hover:bg-[#19a32b] disabled:opacity-40"
+          className="w-full bg-primary text-white py-3 rounded font-semibold
+          hover:bg-primary-hover disabled:opacity-40"
         >
           {loading ? 'Verifying...' : 'Join Exam'}
         </button>

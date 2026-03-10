@@ -8,7 +8,7 @@ const HeroSection = () => {
         <div className="flex flex-col gap-8 order-2 lg:order-1">
           <div className="flex flex-col gap-4">
             {/* Badge */}
-            <span className="inline-flex w-fit items-center gap-2 px-3 py-1 rounded-full bg-[#1fbb32]/10 text-[#1fbb32] text-xs font-bold uppercase tracking-wider">
+            <span className="inline-flex w-fit items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
               <span className="material-symbols-outlined text-sm">bolt</span>
               Academic Excellence
             </span>
@@ -16,7 +16,7 @@ const HeroSection = () => {
             {/* Main Heading */}
             <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight text-[#0f172a]">
               Master Your Exams with{' '}
-              <span className="text-[#1fbb32]">LearnX</span>
+              <span className="text-primary">LearnX</span>
             </h1>
 
             {/* Description */}
@@ -28,7 +28,7 @@ const HeroSection = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4">
-            <button className="bg-[#1fbb32] hover:bg-[#1fbb32]/90 text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-[#1fbb32]/30 transition-all flex items-center gap-2 active:scale-95">
+            <button className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/30 transition-all flex items-center gap-2 active:scale-95">
               Get Started Today
             </button>
             <button className="bg-white border border-[#e2e8f0] text-[#0f172a] px-8 py-4 rounded-xl text-base font-bold hover:bg-[#f8fafc] transition-all active:scale-95">
@@ -63,7 +63,7 @@ const HeroSection = () => {
 
         {/* Right Image Column */}
         <div className="order-1 lg:order-2">
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl shadow-[#1fbb32]/10 group">
+          <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl shadow-primary/10 group">
             <Image
               width={1440}
               height={1440}
@@ -72,13 +72,13 @@ const HeroSection = () => {
               src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop"
             />
             {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#1fbb32]/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent"></div>
 
             {/* Success Card Overlay */}
             <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/90 backdrop-blur rounded-xl border border-white/20 shadow-lg">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#1fbb32]/20 rounded-lg">
-                  <span className="material-symbols-outlined text-[#1fbb32]">
+                <div className="p-2 bg-primary/20 rounded-lg">
+                  <span className="material-symbols-outlined text-primary">
                     trending_up
                   </span>
                 </div>

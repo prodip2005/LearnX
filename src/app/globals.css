@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff; /* সাদা */
-  --foreground: #171717; /* কালো টেক্সট */
+  --background: #ffffff; 
+  --foreground: #171717;
 }
 
-/* আপাতত নিচের ডার্ক মোড অংশটি কমেন্ট করে রাখতে পারেন বা মুছে দিতে পারেন */
 /* :root.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
@@ -17,11 +16,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Primary Theme Colors */
+  --color-primary: #1fbb32;
+  --color-primary-hover: #1aa22b;
+  --color-primary-light: #f0fdf4;
+  --color-primary-accent: #e8f8eb;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  /* আপনার লেআউটে দেওয়া ভেরিয়েবলগুলো এখানে ব্যবহার করা ভালো */
   font-family: var(--font-geist-sans), Arial, sans-serif;
 }

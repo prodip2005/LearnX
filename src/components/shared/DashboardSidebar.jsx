@@ -90,7 +90,7 @@ const DashboardSidebar = () => {
     <>
       <div className="p-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#1fbb32] flex items-center justify-center text-white shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shrink-0">
             <GraduationCap size={24} />
           </div>
           {(!isCollapsed || mobile) && (
@@ -119,8 +119,8 @@ const DashboardSidebar = () => {
               onClick={() => mobile && setIsMobileOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-sm ${
                 isActive
-                  ? 'bg-[#1fbb32] text-white shadow-lg'
-                  : 'text-slate-600 hover:bg-[#f0fdf4] hover:text-[#1fbb32]'
+                  ? 'bg-primary text-white shadow-lg'
+                  : 'text-slate-600 hover:bg-primary-light hover:text-primary'
               } ${isCollapsed && !mobile ? 'justify-center px-0' : ''}`}
             >
               <span className="shrink-0">{link.icon}</span>
@@ -149,7 +149,7 @@ const DashboardSidebar = () => {
               <p className="text-xs font-bold truncate text-slate-800">
                 User Name
               </p>
-              <p className="text-[10px] font-black text-[#1fbb32] uppercase">
+              <p className="text-[10px] font-black text-primary uppercase">
                 {currentRole}
               </p>
             </div>
@@ -164,7 +164,7 @@ const DashboardSidebar = () => {
       {/* Mobile Header: শুধু ফোনেই দেখাবে */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 z-50">
         <Link href={'/'}>
-          <div className="flex items-center gap-2 text-[#1fbb32]">
+          <div className="flex items-center gap-2 text-primary">
             <GraduationCap size={28} />
             <span className="font-black text-slate-800">LearnX</span>
           </div>
@@ -185,7 +185,7 @@ const DashboardSidebar = () => {
       >
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-12 bg-[#1fbb32] text-white rounded-full p-1 shadow-md z-50 border-2 border-white"
+          className="absolute -right-3 top-12 bg-primary text-white rounded-full p-1 shadow-md z-50 border-2 border-white"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

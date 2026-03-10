@@ -81,7 +81,7 @@ const BecomeStudent = () => {
           title: 'Application Sent!',
           text: 'Your application is pending for approval.',
           icon: 'success',
-          confirmButtonColor: '#1fbb32',
+           confirmButtonColor: 'var(--color-primary)',
         });
         router.push('/');
       } else {
@@ -97,20 +97,20 @@ const BecomeStudent = () => {
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12 px-4 md:px-0 font-display">
       <div className="max-w-[720px] mx-auto flex flex-col gap-6">
-        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-[#1fbb32]/5 border border-[#1fbb32]/10 overflow-hidden">
-          <div className="relative h-40 w-full bg-[#1fbb32]/5 flex items-center px-8 md:px-12 overflow-hidden">
+        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden">
+          <div className="relative h-40 w-full bg-primary/5 flex items-center px-8 md:px-12 overflow-hidden">
             <div className="relative z-10">
               <h1 className="text-[#0f172a] text-2xl font-black">
                 Student Registration
               </h1>
               <p className="text-[#64748b] text-sm">
                 Register as a student with{' '}
-                <span className="text-[#1fbb32] font-bold">{user?.email}</span>
+                <span className="text-primary font-bold">{user?.email}</span>
               </p>
             </div>
             <GraduationCap
               size={100}
-              className="absolute right-8 opacity-10 text-[#1fbb32]"
+              className="absolute right-8 opacity-10 text-primary"
             />
           </div>
 
@@ -133,7 +133,7 @@ const BecomeStudent = () => {
                     type="text"
                     required
                     value={formData.fullName}
-                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-[#1fbb32] outline-none text-sm"
+                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-primary outline-none text-sm"
                     placeholder="e.g. Alex Johnson"
                     onChange={(e) =>
                       setFormData({ ...formData, fullName: e.target.value })
@@ -155,7 +155,7 @@ const BecomeStudent = () => {
                   <input
                     type="text"
                     required
-                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-[#1fbb32] outline-none text-sm"
+                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-primary outline-none text-sm"
                     placeholder="Your Institution"
                     onChange={(e) =>
                       setFormData({ ...formData, institution: e.target.value })
@@ -176,7 +176,7 @@ const BecomeStudent = () => {
                   />
                   <select
                     required
-                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-[#1fbb32] outline-none appearance-none bg-white text-sm"
+                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-primary outline-none appearance-none bg-white text-sm"
                     onChange={(e) =>
                       setFormData({ ...formData, currentClass: e.target.value })
                     }
@@ -203,7 +203,7 @@ const BecomeStudent = () => {
                   />
                   <input
                     type="text"
-                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-[#1fbb32] outline-none text-sm"
+                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-primary outline-none text-sm"
                     placeholder="Science / Commerce / Arts"
                     onChange={(e) =>
                       setFormData({ ...formData, department: e.target.value })
@@ -225,7 +225,7 @@ const BecomeStudent = () => {
                   <input
                     type="tel"
                     required
-                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-[#1fbb32] outline-none text-sm"
+                    className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 focus:border-primary outline-none text-sm"
                     placeholder="+880 1XXX XXXXXX"
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
@@ -235,12 +235,12 @@ const BecomeStudent = () => {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-[#f0fdf4] rounded-xl border border-[#1fbb32]/10 transition-all">
+            <div className="flex items-start gap-3 p-4 bg-primary-light rounded-xl border border-primary/10 transition-all">
               <input
                 id="terms"
                 type="checkbox"
                 required
-                className="w-5 h-5 mt-0.5 text-[#1fbb32] border-slate-300 rounded focus:ring-[#1fbb32] accent-[#1fbb32] cursor-pointer"
+                className="w-5 h-5 mt-0.5 text-primary border-slate-300 rounded focus:ring-primary accent-primary cursor-pointer"
                 onChange={(e) =>
                   setFormData({ ...formData, agreeToTerms: e.target.checked })
                 }
@@ -250,8 +250,8 @@ const BecomeStudent = () => {
                 className="text-xs text-[#475569] cursor-pointer leading-tight"
               >
                 I agree to the{' '}
-                <span className="text-[#1fbb32] font-bold">Terms</span> and{' '}
-                <span className="text-[#1fbb32] font-bold">Privacy Policy</span>
+                <span className="text-primary font-bold">Terms</span> and{' '}
+                <span className="text-primary font-bold">Privacy Policy</span>
                 .
               </label>
             </div>
@@ -261,7 +261,7 @@ const BecomeStudent = () => {
               disabled={!formData.agreeToTerms || loading}
               className={`flex w-full items-center justify-center gap-3 h-12 text-white text-sm font-bold rounded-xl transition-all shadow-lg active:scale-[0.98] ${
                 formData.agreeToTerms && !loading
-                  ? 'bg-[#1fbb32] hover:bg-[#16a34a] shadow-[#1fbb32]/25'
+                  ? 'bg-primary hover:bg-primary-hover shadow-primary/25'
                   : 'bg-slate-300 cursor-not-allowed'
               }`}
             >

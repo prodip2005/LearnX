@@ -65,7 +65,7 @@ const CreateExam = () => {
 
         <Link
           href="/dashboard/teacher/create-exam/new"
-          className="flex items-center gap-2 bg-[#1fbb32] text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-[#1fbb32]/20 hover:bg-[#19a32b] transition-all"
+          className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
         >
           <Plus size={18} /> New Exam Room
         </Link>
@@ -81,7 +81,7 @@ const CreateExam = () => {
           <input
             type="text"
             placeholder="Search exams..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-[#1fbb32] transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary transition-all"
           />
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -102,10 +102,10 @@ const CreateExam = () => {
         {examList.map((exam) => (
           <div
             key={exam.id}
-            className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:border-[#1fbb32]/30 transition-all group"
+            className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:border-primary/30 transition-all group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] text-[#1fbb32] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-primary-light text-primary flex items-center justify-center">
                 <FileText size={24} />
               </div>
               <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ const CreateExam = () => {
               </div>
             </div>
 
-            <h3 className="font-bold text-slate-800 mb-1 group-hover:text-[#1fbb32] transition-colors line-clamp-1">
+            <h3 className="font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors line-clamp-1">
               {exam.name}
             </h3>
             <p className="text-xs text-slate-400 font-medium mb-4">
@@ -135,11 +135,11 @@ const CreateExam = () => {
 
             <div className="grid grid-cols-2 gap-2 py-4 border-t border-slate-50">
               <div className="flex items-center gap-1.5 text-slate-500">
-                <Calendar size={13} className="text-[#1fbb32]" />
+                <Calendar size={13} className="text-primary" />
                 <span className="text-[11px] font-semibold">{exam.date}</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-500">
-                <Users size={13} className="text-[#1fbb32]" />
+                <Users size={13} className="text-primary" />
                 <span className="text-[11px] font-semibold">
                   {exam.students} Students
                 </span>
@@ -151,7 +151,7 @@ const CreateExam = () => {
                 <Eye size={14} /> Details
               </button>
               {exam.status === 'Active' && (
-                <button className="px-3 py-2.5 rounded-xl bg-[#1fbb32]/10 text-[#1fbb32] text-xs font-bold hover:bg-[#1fbb32] hover:text-white transition-all">
+                <button className="px-3 py-2.5 rounded-xl bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-all">
                   Results
                 </button>
               )}

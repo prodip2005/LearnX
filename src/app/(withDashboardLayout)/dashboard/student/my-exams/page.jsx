@@ -47,7 +47,7 @@ const StudentExams = () => {
   if (loading)
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="animate-spin text-[#1fbb32]" size={40} />
+        <Loader2 className="animate-spin text-primary" size={40} />
       </div>
     );
 
@@ -70,7 +70,7 @@ const StudentExams = () => {
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300
           ${
             activeTab === 'all'
-              ? 'bg-[#1fbb32] text-white shadow-md shadow-[#1fbb32]/20'
+              ? 'bg-primary text-white shadow-md shadow-primary/20'
               : 'text-slate-500 hover:bg-slate-50'
           }`}
         >
@@ -82,7 +82,7 @@ const StudentExams = () => {
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300
           ${
             activeTab === 'joined'
-              ? 'bg-[#1fbb32] text-white shadow-md shadow-[#1fbb32]/20'
+              ? 'bg-primary text-white shadow-md shadow-primary/20'
               : 'text-slate-500 hover:bg-slate-50'
           }`}
         >
@@ -118,7 +118,7 @@ const StudentExams = () => {
                     className="border-b border-slate-50 last:border-0 hover:bg-[#f0fdf4]/30 transition-colors group"
                   >
                     <td className="p-5">
-                      <div className="font-bold text-slate-700 group-hover:text-[#1fbb32] transition-colors">
+                      <div className="font-bold text-slate-700 group-hover:text-primary transition-colors">
                         {exam.examTitle || exam.roomTitle}
                       </div>
                     </td>
@@ -186,7 +186,7 @@ const StudentExams = () => {
                     
                     <td className="p-5">
                       <div className="flex items-center gap-2 font-black text-slate-800">
-                        <Trophy size={16} className="text-[#1fbb32]" />
+                        <Trophy size={16} className="text-primary" />
                         {result.totalMark}{' '}
                         <span className="text-slate-300 font-bold">
                           / {result.totalQuestions}
@@ -194,7 +194,7 @@ const StudentExams = () => {
                       </div>
                     </td>
                     <td className="p-5">
-                      <div className="flex items-center gap-1.5 text-[10px] font-black text-[#1fbb32] uppercase bg-[#1fbb32]/5 w-fit px-3 py-1 rounded-full border border-[#1fbb32]/10">
+                      <div className="flex items-center gap-1.5 text-[10px] font-black text-primary uppercase bg-primary/5 w-fit px-3 py-1 rounded-full border border-primary/10">
                         <CheckCircle2 size={12} /> Verified
                       </div>
                     </td>

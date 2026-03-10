@@ -60,7 +60,7 @@ export const useAuthActions = () => {
                 title: 'Success!',
                 text: `Welcome to LearnX, ${fullName}!`,
                 icon: 'success',
-                confirmButtonColor: '#1fbb32',
+                confirmButtonColor: 'var(--color-primary)',
             });
             return result.user;
         } catch (error) {
