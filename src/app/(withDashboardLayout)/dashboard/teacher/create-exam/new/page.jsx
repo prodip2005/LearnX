@@ -1,31 +1,45 @@
 'use client';
-import React, { useState } from 'react';
-import Swal from 'sweetalert2'; // SweetAlert ইমপোর্ট
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import { auth } from '@/lib/firebase.init'; // আপনার পাথ অনুযায়ী ঠিক করে নিন
+import { onAuthStateChanged } from 'firebase/auth';
 import {
   RefreshCw,
   Trash2,
   PlusCircle,
   ChevronDown,
-  Upload,
   CheckCircle2,
+  Layers,
 } from 'lucide-react';
 
 const CreateNewRoom = () => {
   const [roomTitle, setRoomTitle] = useState('');
-  const [roomCode, setRoomCode] = useState('882104');
+  const [roomCode, setRoomCode] = useState('');
   const [duration, setDuration] = useState('90 Minutes');
   const [category, setCategory] = useState('Science');
+  const [teacherEmail, setTeacherEmail] = useState('');
 
-  // MCQ Questions State (correctAnswer ফিল্ড যোগ করা হয়েছে)
+  // MCQ Questions State
   const [questions, setQuestions] = useState([
     {
       id: Date.now(),
       description: '',
       options: { A: '', B: '', C: '', D: '' },
-      correctAnswer: '', // সঠিক উত্তরের জন্য
+      correctAnswer: '',
       required: false,
     },
   ]);
+
+  // লগইন থাকা ইউজারের ইমেইল গেট করা
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setTeacherEmail(user.email);
+      }
+    });
+    generateRandomCode();
+    return () => unsubscribe();
+  }, []);
 
   const generateRandomCode = () => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -72,12 +86,19 @@ const CreateNewRoom = () => {
     if (!roomTitle) {
       return Swal.fire({
         icon: 'warning',
-        title: 'Oops...',
+        title: 'Title Required',
         text: 'Please enter a room title!',
       });
     }
 
-    // সঠিক উত্তর সিলেক্ট করা হয়েছে কি না চেক করা
+    if (!teacherEmail) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Auth Error',
+        text: 'Login required to create a room.',
+      });
+    }
+
     const hasIncomplete = questions.some(
       (q) => !q.correctAnswer || !q.description,
     );
@@ -95,7 +116,8 @@ const CreateNewRoom = () => {
       duration,
       category,
       questions,
-      teacherEmail: 'teacher@example.com',
+      teacherEmail, // লগইন করা টিচারের ইমেইল
+      createdAt: new Date(),
     };
 
     try {
@@ -110,12 +132,12 @@ const CreateNewRoom = () => {
       if (data.success) {
         Swal.fire({
           icon: 'success',
-          title: 'Success!',
-          text: `Exam Room "${roomTitle}" Created. Code: ${roomCode}`,
+          title: 'Room Created!',
+          text: `Room Code: ${roomCode}`,
           confirmButtonColor: '#1fbb32',
         });
 
-        // সফল হওয়ার পর রিসেট লজিক
+        // ফর্ম রিসেট
         setRoomTitle('');
         setQuestions([
           {
@@ -126,7 +148,7 @@ const CreateNewRoom = () => {
             required: false,
           },
         ]);
-        generateRandomCode(); // কোড অটো জেনারেট হয়ে যাবে
+        generateRandomCode();
       } else {
         Swal.fire({ icon: 'error', title: 'Failed', text: data.error });
       }
@@ -140,62 +162,72 @@ const CreateNewRoom = () => {
   };
 
   return (
-    <div className="p-6 md:p-10 w-full bg-[#f9fafb] min-h-screen space-y-8 font-sans">
+    <div className="p-6 md:p-10 w-full bg-[#f9fafb] min-h-screen space-y-8 font-sans text-slate-700">
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-6">
-        <h1 className="text-xl font-bold text-slate-800">
-          Create New Exam Room
-        </h1>
+        <div>
+          <h1 className="text-xl font-bold text-slate-800">
+            Create New Exam Room
+          </h1>
+          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-wider italic">
+            Creating as: {teacherEmail || 'Loading user...'}
+          </p>
+        </div>
       </div>
 
+      {/* Settings Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-6">
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
+            <label className="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">
               Room Title
             </label>
             <input
               value={roomTitle}
               onChange={(e) => setRoomTitle(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] focus:border-[#1fbb32] outline-none transition-all"
-              placeholder="e.g. Advanced Physics - Midterm 2024"
+              placeholder="e.g. Mathematics - Final Exam 2026"
             />
           </div>
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">
                 Duration
               </label>
               <div className="relative">
                 <select
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] outline-none appearance-none"
+                  className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] outline-none appearance-none font-medium"
                 >
                   <option>45 Minutes</option>
                   <option>60 Minutes</option>
                   <option>90 Minutes</option>
+                  <option>120 Minutes</option>
                 </select>
                 <ChevronDown
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                   size={16}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">
                 Category
               </label>
               <div className="relative">
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] outline-none appearance-none"
+                  className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] outline-none appearance-none font-medium"
                 >
                   <option>Science</option>
                   <option>Mathematics</option>
+                  <option>General Knowledge</option>
+                  <option>Programming</option>
                 </select>
                 <ChevronDown
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                   size={16}
                 />
               </div>
@@ -203,68 +235,86 @@ const CreateNewRoom = () => {
           </div>
         </div>
 
-        {/* Room Code Card (ইন্ডিপেন্ডেন্টলি এডিট করা যাবে) */}
-        <div className="bg-[#1fbb32] text-white p-8 rounded-2xl flex flex-col justify-center items-center relative overflow-hidden shadow-lg shadow-[#1fbb32]/20">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-80">
-            Entry Code
+        {/* Room Code Card */}
+        <div className="bg-[#1fbb32] text-white p-8 rounded-[2rem] flex flex-col justify-center items-center relative overflow-hidden shadow-xl shadow-[#1fbb32]/20">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Layers size={100} />
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 opacity-80">
+            Access Code
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 relative z-10">
             <input
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value.slice(0, 6))}
-              className="bg-transparent text-5xl font-bold tracking-widest font-mono outline-none w-48 text-center border-b border-white/30 focus:border-white"
+              className="bg-transparent text-3xl font-black tracking-widest font-mono outline-none w-48 text-center border-b-2 border-white/20 focus:border-white transition-all"
               maxLength={6}
             />
             <RefreshCw
               onClick={generateRandomCode}
-              className="cursor-pointer hover:rotate-180 transition-all duration-500"
-              size={24}
+              className="cursor-pointer hover:rotate-180 transition-all duration-700 bg-white/10 p-2 rounded-full"
+              size={36}
             />
           </div>
-          <p className="text-[10px] mt-6 opacity-70 italic text-center">
-            Type manually or click icon to auto-generate
+          <p className="text-[10px] mt-6 opacity-70 font-bold italic text-center uppercase tracking-widest">
+            Click icon to refresh
           </p>
         </div>
       </div>
 
+      {/* Questions Section */}
       <div className="space-y-6">
-        <h2 className="font-bold text-slate-800 flex items-center gap-2">
-          <CheckCircle2 className="text-[#1fbb32]" size={20} /> Questions &
-          Answers
+        <h2 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
+          <CheckCircle2 className="text-[#1fbb32]" size={22} /> Exam
+          Questionnaire
         </h2>
 
         {questions.map((q, index) => (
           <div
             key={q.id}
-            className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all"
+            className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden group hover:border-[#1fbb32]/30 transition-all"
           >
             <div className="p-8 space-y-6">
-              <div>
-                <p className="text-xs font-bold text-slate-400 mb-2 uppercase">
+              <div className="flex justify-between items-center">
+                <p className="text-[11px] font-black text-[#1fbb32] uppercase tracking-widest bg-[#1fbb32]/5 px-3 py-1 rounded-lg">
                   Question {index + 1}
                 </p>
-                <textarea
-                  value={q.description}
-                  onChange={(e) =>
-                    handleQuestionChange(q.id, 'description', e.target.value)
-                  }
-                  className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-[#f8fafc] focus:border-[#1fbb32] outline-none resize-none"
-                  placeholder="What is the capital of France?"
-                  rows="2"
-                ></textarea>
+                <Trash2
+                  onClick={() => removeQuestion(q.id)}
+                  className="text-slate-200 hover:text-red-500 cursor-pointer transition-colors"
+                  size={18}
+                />
               </div>
+
+              <textarea
+                value={q.description}
+                onChange={(e) =>
+                  handleQuestionChange(q.id, 'description', e.target.value)
+                }
+                className="w-full px-5 py-4 rounded-2xl border border-slate-100 bg-[#f8fafc] focus:border-[#1fbb32] outline-none resize-none font-medium placeholder:text-slate-300"
+                placeholder="Type your question here..."
+                rows="2"
+              ></textarea>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {['A', 'B', 'C', 'D'].map((label) => (
                   <div
                     key={label}
-                    className={`flex items-center border rounded-xl px-4 py-3 transition-all ${q.correctAnswer === label ? 'border-[#1fbb32] bg-[#f0fdf4]' : 'border-slate-100 bg-[#f8fafc]'}`}
+                    className={`flex items-center border-2 rounded-2xl px-5 py-4 transition-all duration-300 ${
+                      q.correctAnswer === label
+                        ? 'border-[#1fbb32] bg-[#f0fdf4] shadow-sm'
+                        : 'border-slate-50 bg-[#f8fafc] hover:border-slate-200'
+                    }`}
                   >
                     <button
                       onClick={() =>
                         handleQuestionChange(q.id, 'correctAnswer', label)
                       }
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold mr-3 shadow-sm transition-all ${q.correctAnswer === label ? 'bg-[#1fbb32] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black mr-4 shadow-sm transition-all ${
+                        q.correctAnswer === label
+                          ? 'bg-[#1fbb32] text-white scale-110'
+                          : 'bg-white text-slate-400 border border-slate-100 hover:border-[#1fbb32]'
+                      }`}
                     >
                       {label}
                     </button>
@@ -275,59 +325,57 @@ const CreateNewRoom = () => {
                       }
                       type="text"
                       placeholder={`Option ${label}`}
-                      className="bg-transparent outline-none text-sm w-full font-medium"
+                      className="bg-transparent outline-none text-sm w-full font-bold text-slate-600 placeholder:font-normal placeholder:text-slate-300"
                     />
                     {q.correctAnswer === label && (
-                      <CheckCircle2 size={16} className="text-[#1fbb32]" />
+                      <CheckCircle2 size={18} className="text-[#1fbb32] ml-2" />
                     )}
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-400 font-bold italic">
-                * Click the A, B, C, D circle to set the correct answer
-              </p>
             </div>
-            <div className="bg-[#f9fafb] px-8 py-3 flex justify-between items-center border-t border-slate-50">
-              <label className="flex items-center gap-2 cursor-pointer text-[11px] font-bold text-slate-400 uppercase">
+            <div className="bg-[#fcfdfe] px-8 py-4 flex items-center border-t border-slate-50">
+              <label className="flex items-center gap-3 cursor-pointer text-[10px] font-black text-slate-400 uppercase tracking-widest group">
                 <input
                   type="checkbox"
                   checked={q.required}
                   onChange={(e) =>
                     handleQuestionChange(q.id, 'required', e.target.checked)
                   }
-                  className="accent-[#1fbb32] w-4 h-4"
-                />{' '}
-                Required
+                  className="accent-[#1fbb32] w-5 h-5 rounded-md"
+                />
+                Required Question
               </label>
-              <Trash2
-                onClick={() => removeQuestion(q.id)}
-                className="text-slate-300 hover:text-red-500 cursor-pointer transition-colors"
-                size={18}
-              />
             </div>
           </div>
         ))}
 
         <button
           onClick={addQuestion}
-          className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center gap-2 text-[#1fbb32] font-bold hover:bg-[#f0fdf4] transition-all"
+          className="w-full py-5 border-2 border-dashed border-slate-200 rounded-[2rem] flex items-center justify-center gap-3 text-[#1fbb32] font-black text-sm uppercase tracking-widest hover:bg-[#f0fdf4] hover:border-[#1fbb32]/20 transition-all active:scale-[0.99]"
         >
-          <PlusCircle size={20} /> Add New Question
+          <PlusCircle size={20} /> Add Next Question
         </button>
       </div>
 
-      <div className="mt-12 pt-6 border-t border-slate-100 flex items-center justify-between">
-        <p className="text-xs text-slate-400 font-bold uppercase">
-          Total Questions: {questions.length}
-        </p>
-        <div className="flex gap-4">
-          <button
-            onClick={handleCreateRoom}
-            className="px-10 py-3 bg-[#1fbb32] text-white rounded-xl text-sm font-bold shadow-lg shadow-[#1fbb32]/20 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
-          >
-            Create Room
-          </button>
+      {/* Footer Actions */}
+      <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              Total Items
+            </p>
+            <p className="text-xl font-black text-[#1fbb32]">
+              {questions.length}
+            </p>
+          </div>
         </div>
+        <button
+          onClick={handleCreateRoom}
+          className="px-12 py-4 bg-[#1fbb32] text-white rounded-[1.5rem] font-black text-sm uppercase tracking-[0.1em] shadow-xl shadow-[#1fbb32]/20 hover:bg-[#16a34a] hover:-translate-y-1 active:translate-y-0 transition-all w-full md:w-auto"
+        >
+          Publish Exam Room
+        </button>
       </div>
     </div>
   );

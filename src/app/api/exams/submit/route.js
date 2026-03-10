@@ -46,3 +46,25 @@ export async function POST(request) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }
+
+
+
+// আপনার বর্তমান POST মেথডের নিচে এটি যোগ করুন
+export async function GET(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const email = searchParams.get("email");
+
+        if (!email) {
+            return NextResponse.json({ success: false, message: "Email is required" }, { status: 400 });
+        }
+
+        const resultsCollection = await getCollection("results");
+        // স্টুডেন্ট ইমেইল অনুযায়ী রেজাল্ট ফিল্টার করা
+        const results = await resultsCollection.find({ studentEmail: email }).sort({ submittedAt: -1 }).toArray();
+
+        return NextResponse.json({ success: true, data: results });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+}

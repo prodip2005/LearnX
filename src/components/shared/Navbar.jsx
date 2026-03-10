@@ -63,6 +63,15 @@ const Navbar = () => {
     firebaseUser?.photoURL ||
     'https://i.ibb.co/5GzXkwq/default-avatar.png';
 
+  // ইউজার রোল অনুযায়ী ড্যাশবোর্ড লিঙ্ক জেনারেট করা
+  const getDashboardLink = () => {
+    if (!dbUser?.role) return '/dashboard';
+    if (dbUser.role === 'admin') return '/dashboard/admin';
+    if (dbUser.role === 'teacher') return '/dashboard/teacher';
+    if (dbUser.role === 'student') return '/dashboard/student';
+    return '/dashboard'; // default fallback
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-[#1fbb32]/10 bg-white/80 backdrop-blur-md px-6 md:px-20 lg:px-40 py-3">
@@ -98,9 +107,9 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-4">
               {firebaseUser ? (
                 <div className="flex items-center gap-4">
-                  {/* Dashboard Link */}
+                  {/* ডাইনামিক ড্যাশবোর্ড লিঙ্ক */}
                   <Link
-                    href="/dashboard"
+                    href={getDashboardLink()}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all duration-300 ${
                       pathname.startsWith('/dashboard')
                         ? 'bg-[#1fbb32] text-white border-[#1fbb32]'
@@ -157,13 +166,15 @@ const Navbar = () => {
                     className={`px-4 py-2 text-sm font-bold transition-colors ${pathname === '/login' ? 'text-[#1fbb32]' : 'text-slate-600'}`}
                   >
                     Login
-                  </Link>
-                  <Link
-                    href="/become-student"
-                    className="bg-[#1fbb32] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#1fbb32]/20 active:scale-95 transition-all"
-                  >
-                    Be a Student
-                  </Link>
+                    </Link>
+                    {dbUser?.role === 'user' && (
+                      <Link
+                        href="/become-student"
+                        className="bg-[#1fbb32] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#1fbb32]/20 active:scale-95 transition-all"
+                      >
+                        Be a Student
+                      </Link>
+                    )}
                 </div>
               )}
             </div>
@@ -203,14 +214,12 @@ const Navbar = () => {
 
           <div className="flex flex-col gap-2">
             <Link
-              href="/dashboard"
+              href={getDashboardLink()}
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl ${pathname.startsWith('/dashboard') ? 'bg-[#1fbb32] text-white' : 'text-[#1fbb32] bg-[#f0fdf4]'}`}
             >
               <LayoutDashboard size={20} /> Go to Dashboard
             </Link>
-
-            {/* Mobile Be a Student Condition */}
 
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
