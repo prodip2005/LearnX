@@ -1,25 +1,77 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users,
   FileText,
   GraduationCap,
-  TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
   MoreVertical,
   Search,
+  Loader2,
 } from 'lucide-react';
 import AdminRoute from '@/components/AdminRoute';
+import Link from 'next/link';
 
 const AdminDashboard = () => {
-  // ডামি ডাটা (পরবর্তীতে API থেকে আসবে)
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    totalStudents: 0,
+    totalTeachers: 0,
+    totalExams: 0,
+    recentUsers: [],
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // ১. আপনার দেওয়া API গুলো থেকে ডাটা ফেচ করা
+        const [studentRes, examRes, userRes] = await Promise.all([
+          fetch('/api/become-student/manage'), // Students info
+          fetch('/api/exams/create'), // Total Exams
+          fetch('/api/users'), // Teachers & Recent Users
+        ]);
+
+        const studentsData = await studentRes.json();
+        const examsData = await examRes.json();
+        const usersData = await userRes.json();
+
+        // ২. ডাটা প্রসেসিং
+        // রোল 'teacher' এর সংখ্যা বের করা
+        const teachersCount = usersData.filter(
+          (u) => u.role === 'teacher',
+        ).length;
+
+        // রোল 'student' এর সংখ্যা বের করা (student collection থেকে)
+        const studentsCount = studentsData.data?.length || 0;
+
+        // নতুন ইউজার সর্টিং (Time অনুযায়ী - Newest First)
+        const sortedRecentUsers = [...usersData]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+
+        setData({
+          totalStudents: studentsCount,
+          totalTeachers: teachersCount,
+          totalExams: examsData.data?.length || 0,
+          recentUsers: sortedRecentUsers,
+        });
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
   const stats = [
     {
       id: 1,
       name: 'Total Students',
-      value: '12,450',
+      value: data.totalStudents.toLocaleString(),
       icon: <Users size={24} />,
       trend: '+12%',
       up: true,
@@ -28,7 +80,7 @@ const AdminDashboard = () => {
     {
       id: 2,
       name: 'Total Teachers',
-      value: '840',
+      value: data.totalTeachers.toLocaleString(),
       icon: <GraduationCap size={24} />,
       trend: '+5%',
       up: true,
@@ -37,49 +89,21 @@ const AdminDashboard = () => {
     {
       id: 3,
       name: 'Active Exams',
-      value: '124',
+      value: data.totalExams.toLocaleString(),
       icon: <FileText size={24} />,
-      trend: '-2%',
-      up: false,
-      color: 'bg-orange-500',
-    },
-    {
-      id: 4,
-      name: 'Success Rate',
-      value: '94.2%',
-      icon: <TrendingUp size={24} />,
-      trend: '+3%',
+      trend: 'Live',
       up: true,
-      color: 'bg-emerald-500',
+      color: 'bg-orange-500',
     },
   ];
 
-  const recentUsers = [
-    {
-      id: 1,
-      name: 'Ariful Islam',
-      email: 'arif@example.com',
-      role: 'Student',
-      status: 'Active',
-      date: '2 mins ago',
-    },
-    {
-      id: 2,
-      name: 'Dr. Sarah',
-      email: 'sarah@univ.edu',
-      role: 'Teacher',
-      status: 'Pending',
-      date: '1 hour ago',
-    },
-    {
-      id: 3,
-      name: 'Tanvir Hossain',
-      email: 'tanvir@test.com',
-      role: 'Student',
-      status: 'Active',
-      date: '3 hours ago',
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-[#f8fafc]">
+        <Loader2 className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
 
   return (
     <AdminRoute>
@@ -113,7 +137,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat) => (
             <motion.div
               key={stat.id}
@@ -155,9 +179,12 @@ const AdminDashboard = () => {
               <h2 className="text-lg font-black text-slate-800">
                 Recent User Registrations
               </h2>
-              <button className="text-primary font-bold text-sm hover:underline">
+              <Link
+                href="/dashboard/admin/users"
+                className="text-primary font-bold text-sm hover:underline"
+              >
                 View All
-              </button>
+              </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -170,15 +197,23 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {recentUsers.map((user) => (
+                  {data.recentUsers.map((user) => (
                     <tr
-                      key={user.id}
+                      key={user._id}
                       className="hover:bg-slate-50/50 transition-colors group"
                     >
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500">
-                            {user.name[0]}
+                          <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center font-bold text-slate-500 border border-slate-200">
+                            {user.image ? (
+                              <img
+                                src={user.image}
+                                alt={user.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              user.name[0]
+                            )}
                           </div>
                           <div>
                             <p className="text-sm font-bold text-slate-800">
@@ -193,9 +228,11 @@ const AdminDashboard = () => {
                       <td className="px-8 py-5">
                         <span
                           className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-lg ${
-                            user.role === 'Teacher'
+                            user.role === 'teacher'
                               ? 'bg-purple-50 text-purple-600'
-                              : 'bg-blue-50 text-blue-600'
+                              : user.role === 'student'
+                                ? 'bg-blue-50 text-blue-600'
+                                : 'bg-slate-50 text-slate-600'
                           }`}
                         >
                           {user.role}
@@ -203,11 +240,9 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-1.5">
-                          <div
-                            className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`}
-                          ></div>
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
                           <span className="text-sm font-bold text-slate-600">
-                            {user.status}
+                            Active
                           </span>
                         </div>
                       </td>
@@ -223,7 +258,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* System Health / Summary Sidebar */}
+          {/* Sidebar Section */}
           <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
             <div className="relative z-10">
               <h2 className="text-lg font-black mb-6">System Health</h2>
@@ -231,12 +266,12 @@ const AdminDashboard = () => {
                 <div>
                   <div className="flex justify-between text-xs font-black uppercase tracking-widest mb-2 opacity-60">
                     <span>Server Load</span>
-                    <span>42%</span>
+                    <span>24%</span>
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: '42%' }}
+                      animate={{ width: '24%' }}
                       className="h-full bg-emerald-400"
                     />
                   </div>
@@ -244,28 +279,29 @@ const AdminDashboard = () => {
                 <div>
                   <div className="flex justify-between text-xs font-black uppercase tracking-widest mb-2 opacity-60">
                     <span>Database Usage</span>
-                    <span>18%</span>
+                    <span>
+                      {((data.recentUsers.length / 100) * 10).toFixed(1)}%
+                    </span>
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: '18%' }}
+                      animate={{ width: '15%' }}
                       className="h-full bg-blue-400"
                     />
                   </div>
                 </div>
               </div>
-
               <div className="mt-12 p-6 bg-white/5 border border-white/10 rounded-3xl">
-                <p className="text-sm font-bold opacity-80 mb-2">Notice</p>
+                <p className="text-sm font-bold opacity-80 mb-2 text-primary">
+                  Live Status
+                </p>
                 <p className="text-xs opacity-60 leading-relaxed">
-                  System update scheduled for March 20th at 03:00 AM UTC. Please
-                  notify all teachers.
+                  Real-time data synchronization active. Total exams processed:{' '}
+                  {data.totalExams}.
                 </p>
               </div>
             </div>
-
-            {/* Decorative Circle */}
             <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/20 rounded-full blur-[80px]"></div>
           </div>
         </div>

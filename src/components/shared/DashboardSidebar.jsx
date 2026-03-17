@@ -1,5 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // useEffect যোগ করা হয়েছে
+import { auth } from '@/lib/firebase.init'; // Firebase auth ইমপোর্ট
+import { onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -19,16 +21,44 @@ import {
   LogOut,
   Menu,
   X,
+  TrendingUp,
+  UserCog,
+  Database,
+  Briefcase,
 } from 'lucide-react';
-import { TrendingUp } from 'lucide-react';
-import { UserCog } from 'lucide-react';
-import { Database } from 'lucide-react';
-import { Briefcase } from 'lucide-react';
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false); // মোবাইলের জন্য
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // ডাইনামিক ইউজার ডাটার জন্য স্টেট
+  const [userData, setUserData] = useState({
+    name: 'Loading...',
+    image: 'https://i.ibb.co/5GzXkwq/default-avatar.png',
+  });
+
+  // ডাইনামিক ডাটা ফেচ করা
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user?.email) {
+        try {
+          const res = await fetch(`/api/users?email=${user.email}`);
+          const data = await res.json();
+          if (data) {
+            setUserData({
+              name: data.name || 'User Name',
+              image:
+                data.image || 'https://i.ibb.co/5GzXkwq/default-avatar.png',
+            });
+          }
+        } catch (error) {
+          console.error('Sidebar user fetch error:', error);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const menuConfig = {
     admin: [
@@ -158,13 +188,14 @@ const DashboardSidebar = () => {
         })}
       </nav>
 
+      {/* ডাইনামিক প্রোফাইল সেকশন */}
       <div className="p-4 border-t border-slate-100">
         <div
           className={`flex items-center bg-slate-50 p-2 rounded-2xl border border-slate-100 ${isCollapsed && !mobile ? 'justify-center' : 'gap-3'}`}
         >
-          <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/20">
             <Image
-              src="https://i.pravatar.cc/150?u=user"
+              src={userData.image} // ডাইনামিক ইমেজ
               alt="Profile"
               fill
               className="object-cover"
@@ -173,7 +204,7 @@ const DashboardSidebar = () => {
           {(!isCollapsed || mobile) && (
             <div className="overflow-hidden">
               <p className="text-xs font-bold truncate text-slate-800">
-                User Name
+                {userData.name} {/* ডাইনামিক নাম */}
               </p>
               <p className="text-[10px] font-black text-primary uppercase">
                 {currentRole}
@@ -187,7 +218,7 @@ const DashboardSidebar = () => {
 
   return (
     <>
-      {/* Mobile Header: শুধু ফোনেই দেখাবে */}
+      {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 z-50">
         <Link href={'/'}>
           <div className="flex items-center gap-2 text-primary">
@@ -203,7 +234,7 @@ const DashboardSidebar = () => {
         </button>
       </div>
 
-      {/* Desktop Sidebar: বড় স্ক্রিনে থাকবে */}
+      {/* Desktop Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: isCollapsed ? 80 : 260 }}
@@ -218,7 +249,7 @@ const DashboardSidebar = () => {
         <SidebarContent />
       </motion.aside>
 
-      {/* Mobile Drawer Overlay: ফোণে মেনু ক্লিক করলে ভেসে আসবে */}
+      {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {isMobileOpen && (
           <>
