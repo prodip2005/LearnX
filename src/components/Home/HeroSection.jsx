@@ -1,4 +1,6 @@
+import { Boxes } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -28,12 +30,16 @@ const HeroSection = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4">
-            <button className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/30 transition-all flex items-center gap-2 active:scale-95">
-              Get Started Today
-            </button>
-            <button className="bg-white border border-[#e2e8f0] text-[#0f172a] px-8 py-4 rounded-xl text-base font-bold hover:bg-[#f8fafc] transition-all active:scale-95">
-              View Tutors
-            </button>
+            <Link href={'/dashboard/teacher'}>
+              <button className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-primary/30 transition-all flex items-center gap-2 active:scale-95">
+                Get Started Today
+              </button>
+            </Link>
+            <Link href={'/tutors'}>
+              <button className="bg-white border border-[#e2e8f0] text-[#0f172a] px-8 py-4 rounded-xl text-base font-bold hover:bg-[#f8fafc] transition-all active:scale-95">
+                View Tutors
+              </button>
+            </Link>
           </div>
 
           {/* Trust Pilot / Student Proof */}
@@ -78,9 +84,7 @@ const HeroSection = () => {
             <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/90 backdrop-blur rounded-xl border border-white/20 shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-primary/20 rounded-lg">
-                  <span className="material-symbols-outlined text-primary">
-                    trending_up
-                  </span>
+                  <Boxes className="material-symbols-outlined text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[#0f172a]">

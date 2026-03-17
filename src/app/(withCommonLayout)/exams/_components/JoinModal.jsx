@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, Lock, Sparkles, Loader2 } from 'lucide-react';
 import React, { useRef, useEffect } from 'react';
 
 const JoinModal = ({
@@ -41,24 +41,33 @@ const JoinModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white w-full max-w-md rounded-lg p-8 relative border">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6 z-[100] transition-all duration-300">
+      <div className="bg-white w-full max-w-lg rounded-[3rem] p-10 relative border border-white/20 shadow-2xl animate-in fade-in zoom-in duration-300">
+        
+        {/* Decorative elements */}
+        <div className="absolute -top-12 -left-12 w-40 h-40 bg-primary/10 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary/10 rounded-full blur-3xl opacity-50"></div>
+
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+          className="absolute right-6 top-6 p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all"
         >
-          <X size={20} />
+          <X size={24} />
         </button>
 
-        <h2 className="text-xl font-semibold text-center text-slate-800 mb-2">
-          Access Exam Room
-        </h2>
+        <div className="flex flex-col items-center text-center mb-10">
+            <div className="w-20 h-20 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary mb-6 shadow-sm">
+                <Lock size={32} strokeWidth={2.5} />
+            </div>
+            <h2 className="text-3xl font-black text-slate-800 mb-2">
+                Join Private Exam
+            </h2>
+            <p className="text-slate-500 font-medium">
+                Please enter the <span className="text-primary font-bold">6-digit room code</span> provided by your teacher.
+            </p>
+        </div>
 
-        <p className="text-sm text-slate-500 text-center mb-6">
-          Enter the 6-digit room code
-        </p>
-
-        <div className="flex justify-center gap-2 mb-6">
+        <div className="flex justify-center gap-3 mb-10">
           {[...Array(6)].map((_, index) => (
             <React.Fragment key={index}>
               <input
@@ -68,12 +77,14 @@ const JoinModal = ({
                 value={roomCode[index] || ''}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-11 h-12 text-center border rounded text-lg font-semibold outline-none 
-                focus:border-primary"
+                className="w-14 h-16 text-center border-2 border-slate-100 rounded-2xl text-2xl font-black text-slate-800 outline-none 
+                focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/50"
               />
 
               {index === 2 && (
-                <span className="text-gray-400 font-bold">-</span>
+                <div className="flex items-center">
+                    <span className="text-slate-200 font-black text-xl">—</span>
+                </div>
               )}
             </React.Fragment>
           ))}
@@ -82,10 +93,16 @@ const JoinModal = ({
         <button
           onClick={onJoin}
           disabled={loading || roomCode.length < 6}
-          className="w-full bg-primary text-white py-3 rounded font-semibold
-          hover:bg-primary-hover disabled:opacity-40"
+          className="w-full h-16 group relative flex items-center justify-center gap-3 bg-primary text-white py-4 rounded-[2rem] font-black text-lg
+          shadow-xl shadow-primary/20 hover:bg-primary-hover hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all"
         >
-          {loading ? 'Verifying...' : 'Join Exam'}
+          {loading ? (
+             <Loader2 className="animate-spin" size={24} />
+          ) : (
+            <>
+                Join Hall
+            </>
+          )}
         </button>
       </div>
     </div>

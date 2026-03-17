@@ -18,7 +18,8 @@
   --font-mono: var(--font-geist-mono);
 
   /* Primary Theme Colors */
-  --color-primary: #1fbb32;
+  --color-primary: #1fbb25;
+  /* --color-primary: #F08000; */
   --color-primary-hover: #1aa22b;
   --color-primary-light: #f0fdf4;
   --color-primary-accent: #e8f8eb;

@@ -1,7 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthActions } from '@/hooks/useAuth';
 import {
   Mail,
@@ -13,11 +13,19 @@ import {
   LogIn,
   ShieldCheck,
 } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import Image from 'next/image';
+import Logo from '@/components/shared/Logo';
 
-const Login = () => {
+// Next.js এ useSearchParams ব্যবহার করলে Suspense দিয়ে র‍্যাপ করা ভালো প্র্যাকটিস
+const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { loginUser, loginWithGoogle, loading } = useAuthActions(); // গুগল মেথড আনা হলো
+  const searchParams = useSearchParams();
+  const { loginUser, loginWithGoogle, loading } = useAuthActions();
+
+  // URL থেকে 'redirect' প্যারামিটার নেওয়া হচ্ছে, না থাকলে ডিফল্ট '/'
+  const redirectTo = searchParams.get('redirect') || '/';
 
   const [formData, setFormData] = useState({
     email: '',
@@ -28,12 +36,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const success = await loginUser(formData.email, formData.password);
-    // if (success) router.push('/dashboard');
+    if (success) {
+      router.push(redirectTo);
+    }
   };
 
   const handleGoogleLogin = async () => {
     const success = await loginWithGoogle();
-    // if (success) router.push('/dashboard');
+    if (success) {
+      router.push(redirectTo);
+    }
   };
 
   return (
@@ -45,7 +57,16 @@ const Login = () => {
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary rounded-full blur-[100px] opacity-20"></div>
           <div className="relative z-10">
             <Link href="/" className="flex items-center gap-2 text-primary">
-              <GraduationCap size={45} strokeWidth={2.5} />
+              {/* <GraduationCap size={45} strokeWidth={2.5} /> */}
+              {/* <Image
+                height={1080}
+                width={1080}
+                className="h-16 w-14"
+                alt="main Logo"
+                src={'/mainLogo.png'}
+              /> */}
+
+              <Logo/>
               <span className="text-3xl font-black text-white">LearnX</span>
             </Link>
           </div>
@@ -59,8 +80,7 @@ const Login = () => {
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-sm text-slate-300">
-                <ShieldCheck size={18} className="text-primary" /> Secure
-                Access
+                <ShieldCheck size={18} className="text-primary" /> Secure Access
               </div>
             </div>
           </div>
@@ -108,7 +128,6 @@ const Login = () => {
                 </label>
                 <Link
                   href="/forgot-password"
-                  size={18}
                   className="text-xs font-bold text-primary hover:underline"
                 >
                   Forgot?
@@ -143,7 +162,9 @@ const Login = () => {
               type="submit"
               disabled={loading}
               className={`w-full flex items-center justify-center gap-3 h-16 text-white text-lg font-black rounded-2xl transition-all shadow-xl ${
-                loading ? 'bg-slate-300' : 'bg-primary hover:bg-primary-hover'
+                loading
+                  ? 'bg-slate-300 cursor-not-allowed'
+                  : 'bg-primary hover:bg-primary-hover active:scale-[0.98]'
               }`}
             >
               {loading ? 'Signing In...' : 'Sign In Now'}{' '}
@@ -163,13 +184,10 @@ const Login = () => {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full h-14 flex items-center justify-center gap-3 border-2 border-slate-100 rounded-2xl hover:bg-slate-50 transition-all font-bold text-slate-700"
+              disabled={loading}
+              className="w-full h-14 flex items-center justify-center gap-3 border-2 border-slate-100 rounded-2xl hover:bg-slate-50 transition-all font-bold text-slate-700 active:scale-[0.98]"
             >
-              <img
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                className="w-5 h-5"
-                alt="google"
-              />
+              <FcGoogle className="w-7 h-7" />
               Google
             </button>
 
@@ -189,4 +207,17 @@ const Login = () => {
   );
 };
 
-export default Login;
+// মেইন এক্সপোর্ট (Suspense ব্যবহার করে যতি searchParams কোনো এরর না দেয়)
+export default function Login() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}

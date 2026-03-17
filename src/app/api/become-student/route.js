@@ -5,10 +5,20 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
-        // কালেকশন রেফারেন্স নেওয়া
+        // কালেকশন রেফারেন্স নেওয়া
         const studentCollection = await getCollection("students");
 
-        // ডাটাবেজে ইনসার্ট করার জন্য অবজেক্ট তৈরি
+        // ১. চেক করা: এই ইমেইল দিয়ে কি অলরেডি কোনো রিকোয়েস্ট পেন্ডিং বা এক্সেপ্টেড আছে?
+        const existingApplication = await studentCollection.findOne({ email: body.email });
+
+        if (existingApplication) {
+            return NextResponse.json({
+                success: false,
+                message: "You have already submitted an application!"
+            }, { status: 400 });
+        }
+
+        // ২. নতুন ডাটাবেজ অবজেক্ট
         const newStudentApplication = {
             fullName: body.fullName,
             institution: body.institution,
@@ -21,7 +31,6 @@ export async function POST(req) {
             appliedAt: new Date(),
         };
 
-        // ডাটাবেজে সেভ করা
         const result = await studentCollection.insertOne(newStudentApplication);
 
         if (result.insertedId) {
@@ -29,18 +38,10 @@ export async function POST(req) {
                 success: true,
                 message: "Application submitted successfully"
             }, { status: 201 });
-        } else {
-            return NextResponse.json({
-                success: false,
-                message: "Failed to submit application"
-            }, { status: 400 });
         }
 
     } catch (error) {
         console.error("Database Error:", error);
-        return NextResponse.json({
-            success: false,
-            message: "Internal Server Error"
-        }, { status: 500 });
+        return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
     }
 }

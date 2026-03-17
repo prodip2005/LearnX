@@ -1,9 +1,10 @@
 import { getCollection } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
     try {
-        const { roomCode, studentAnswers, studentEmail, studentName } = await request.json();
+        const { roomCode, studentAnswers, studentEmail, studentName, questionID } = await request.json();
 
         const examsCollection = await getCollection("questions");
         const resultsCollection = await getCollection("results");
@@ -23,6 +24,7 @@ export async function POST(request) {
 
         // রেজাল্ট অবজেক্ট তৈরি
         const resultDoc = {
+            questionID,
             studentName,
             studentEmail,
             examSubject: exam.roomTitle,
@@ -53,17 +55,47 @@ export async function POST(request) {
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
-        const email = searchParams.get("email");
-
-        if (!email) {
-            return NextResponse.json({ success: false, message: "Email is required" }, { status: 400 });
-        }
+        const email = searchParams.get("email"); // স্টুডেন্ট ইমেইল
+        const teacherEmail = searchParams.get("teacherEmail"); // টিচার ইমেইল
 
         const resultsCollection = await getCollection("results");
-        // স্টুডেন্ট ইমেইল অনুযায়ী রেজাল্ট ফিল্টার করা
-        const results = await resultsCollection.find({ studentEmail: email }).sort({ submittedAt: -1 }).toArray();
+
+        let query = {};
+        if (email) query.studentEmail = email;
+        if (teacherEmail) query.teacherEmail = teacherEmail;
+
+        const results = await resultsCollection.find(query).sort({ submittedAt: -1 }).toArray();
 
         return NextResponse.json({ success: true, data: results });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+}
+
+
+
+
+// আপনার বিদ্যমান GET মেথডের নিচে এটি যোগ করুন
+export async function DELETE(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
+        const deleteAll = searchParams.get("all");
+
+        const resultsCollection = await getCollection("results");
+
+        // সব রেজাল্ট ডিলিট করার জন্য
+        if (deleteAll === "true") {
+            await resultsCollection.deleteMany({});
+            return NextResponse.json({ success: true, message: "All results cleared" });
+        }
+
+        // সিঙ্গেল রেজাল্ট ডিলিট করার জন্য
+        if (!id) return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 });
+
+        await resultsCollection.deleteOne({ _id: new ObjectId(id) });
+        return NextResponse.json({ success: true, message: "Result deleted successfully" });
+
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }

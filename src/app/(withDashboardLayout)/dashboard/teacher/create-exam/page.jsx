@@ -1,165 +1,376 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import { auth } from '@/lib/firebase.init';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
-  FileText,
-  Search,
-  Plus,
-  Filter,
-  MoreVertical,
-  Calendar,
-  Users,
-  Eye,
+  RefreshCw,
+  Trash2,
+  PlusCircle,
+  ChevronDown,
+  CheckCircle2,
+  Layers,
 } from 'lucide-react';
-import Link from 'next/link';
+import TeacherRoute from '@/components/TeacherRoute';
 
 const CreateExam = () => {
-  // ফাংশনের নাম পরিবর্তন করা হলো
-  const [examList] = useState([
+  const [roomTitle, setRoomTitle] = useState('');
+  const [roomCode, setRoomCode] = useState('');
+  const [durationInMinutes, setDurationInMinutes] = useState('60');
+  const [category, setCategory] = useState('');
+  const [currentClass, setCurrentClass] = useState('1');
+  const [teacherEmail, setTeacherEmail] = useState('');
+
+  const [questions, setQuestions] = useState([
     {
-      id: 1,
-      name: 'Advanced Physics - Midterm',
-      category: 'Science',
-      date: '2024-10-25',
-      students: 45,
-      status: 'Active',
-    },
-    {
-      id: 2,
-      name: 'Organic Chemistry Quiz',
-      category: 'Science',
-      date: '2024-10-20',
-      students: 38,
-      status: 'Completed',
-    },
-    {
-      id: 3,
-      name: 'Basic Algebra Mock',
-      category: 'Mathematics',
-      date: '2024-10-15',
-      students: 52,
-      status: 'Draft',
-    },
-    {
-      id: 4,
-      name: 'English Literature Final',
-      category: 'Literature',
-      date: '2024-10-10',
-      students: 30,
-      status: 'Completed',
+      id: Date.now(),
+      description: '',
+      options: { A: '', B: '', C: '', D: '' },
+      correctAnswer: '',
     },
   ]);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) setTeacherEmail(user.email);
+    });
+    generateRandomCode();
+    return () => unsubscribe();
+  }, []);
+
+  const generateRandomCode = () => {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setRoomCode(code);
+  };
+
+const handleCreateRoom = async () => {
+  // ১. ভ্যালিডেশন চেক
+  if (
+    !roomTitle ||
+    !category ||
+    !durationInMinutes ||
+    parseInt(durationInMinutes) <= 0
+  ) {
+    return Swal.fire(
+      'Invalid Input',
+      'Please enter a valid title, category and duration (minimum 1 minute)!',
+      'warning',
+    );
+  }
+
+  try {
+    // ২. ডুপ্লিকেট রুম কোড চেক
+    const checkRes = await fetch(`/api/exams/create?roomCode=${roomCode}`);
+    const checkData = await checkRes.json();
+
+    if (
+      checkData.success &&
+      checkData.data.some((exam) => exam.roomCode === roomCode)
+    ) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Code Already Exists',
+        text: 'This room code is already in use. Please generate a new one!',
+      });
+    }
+  } catch (err) {
+    console.error('Code check error:', err);
+  }
+
+  // ৩. প্রশ্ন ভ্যালিডেশন
+  const hasIncomplete = questions.some(
+    (q) =>
+      !q.description ||
+      !q.correctAnswer ||
+      Object.values(q.options).some((opt) => !opt),
+  );
+  if (hasIncomplete) {
+    return Swal.fire(
+      'Wait!',
+      'Please complete all questions and options.',
+      'error',
+    );
+  }
+
+  // ৪. ডাটা তৈরি (আপনার ডাটাবেস ফরম্যাট অনুযায়ী)
+  const roomData = {
+    roomTitle,
+    roomCode,
+    duration: `${durationInMinutes} Minutes`, // সরাসরি স্ট্রিং ফরম্যাটে পাঠানো হচ্ছে
+    category,
+    currentClass,
+    questions,
+    teacherEmail,
+    createdAt: new Date(),
+    exam: false,
+  };
+
+  try {
+    const res = await fetch('/api/exams/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(roomData),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      Swal.fire('Success', 'Exam room published successfully!', 'success');
+      // রিসেট ফরম
+      setRoomTitle('');
+      setCategory('');
+      setQuestions([
+        {
+          id: Date.now(),
+          description: '',
+          options: { A: '', B: '', C: '', D: '' },
+          correctAnswer: '',
+        },
+      ]);
+      generateRandomCode();
+    }
+  } catch (err) {
+    Swal.fire('Error', 'Something went wrong while publishing!', 'error');
+  }
+};
+
   return (
-    // এখানে w-full ব্যবহার করা হয়েছে যাতে ডানে ফাঁকা না থাকে
-    <div className="p-6 md:p-10 w-full bg-[#f9fafb] min-h-screen space-y-8">
-      {/* ১. হেডার সেকশন */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-            Create Exam
-          </h1>
-          <p className="text-sm text-slate-500 font-medium">
-            Manage and monitor all your examination rooms.
-          </p>
-        </div>
-
-        <Link
-          href="/dashboard/teacher/create-exam/new"
-          className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
-        >
-          <Plus size={18} /> New Exam Room
-        </Link>
-      </div>
-
-      {/* ২. ফিল্টার এবং সার্চ বার */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-        <div className="relative w-full sm:w-80">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            size={18}
-          />
-          <input
-            type="text"
-            placeholder="Search exams..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary transition-all"
-          />
-        </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
-            <Filter size={16} /> Filter
-          </button>
-          <select className="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 outline-none cursor-pointer">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Completed</option>
-            <option>Draft</option>
-          </select>
-        </div>
-      </div>
-
-      {/* ৩. এক্সাম লিস্ট গ্রিড (বড় স্ক্রিনে ৪ কলাম করা হয়েছে) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {examList.map((exam) => (
-          <div
-            key={exam.id}
-            className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:border-primary/30 transition-all group"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-primary-light text-primary flex items-center justify-center">
-                <FileText size={24} />
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase ${
-                    exam.status === 'Active'
-                      ? 'bg-green-100 text-green-600'
-                      : exam.status === 'Completed'
-                        ? 'bg-blue-100 text-blue-600'
-                        : 'bg-slate-100 text-slate-500'
-                  }`}
-                >
-                  {exam.status}
-                </span>
-                <button className="text-slate-400 hover:text-slate-600">
-                  <MoreVertical size={18} />
-                </button>
-              </div>
-            </div>
-
-            <h3 className="font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors line-clamp-1">
-              {exam.name}
-            </h3>
-            <p className="text-xs text-slate-400 font-medium mb-4">
-              {exam.category}
+    <TeacherRoute>
+      <div className="p-4 md:p-8 w-full bg-[#f8fafc] min-h-screen space-y-6">
+        {/* Header */}
+        <div className="pb-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-black text-slate-800 tracking-tight italic">
+              Create Exam Room
+            </h1>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Setup questions and access code
             </p>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-2 py-4 border-t border-slate-50">
-              <div className="flex items-center gap-1.5 text-slate-500">
-                <Calendar size={13} className="text-primary" />
-                <span className="text-[11px] font-semibold">{exam.date}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-slate-500">
-                <Users size={13} className="text-primary" />
-                <span className="text-[11px] font-semibold">
-                  {exam.students} Students
-                </span>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Settings Card */}
+          <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border-none space-y-6">
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">
+                Room Title
+              </label>
+              <input
+                value={roomTitle}
+                onChange={(e) => setRoomTitle(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 focus:bg-white focus:shadow-md focus:shadow-primary/5 outline-none transition-all font-bold text-slate-800 border-none"
+                placeholder="e.g. Science Midterm 2026"
+              />
             </div>
 
-            <div className="flex gap-2 mt-2">
-              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold hover:bg-slate-100 transition-all">
-                <Eye size={14} /> Details
-              </button>
-              {exam.status === 'Active' && (
-                <button className="px-3 py-2.5 rounded-xl bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-all">
-                  Results
-                </button>
-              )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 block">
+                  Duration (Min)
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="number"
+                    value={durationInMinutes}
+                    onChange={(e) => setDurationInMinutes(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-primary/5 focus:bg-white focus:shadow-md focus:shadow-primary/10 outline-none transition-all font-black text-slate-800 border-none"
+                  />
+                  <span className="absolute right-3 font-black text-[9px] text-primary">
+                    MINS
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">
+                  Category
+                </label>
+                <input
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 focus:bg-white focus:shadow-md focus:shadow-primary/5 outline-none transition-all font-bold text-slate-800 border-none"
+                  placeholder="ICT/Math"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">
+                  Class
+                </label>
+                <div className="relative">
+                  <select
+                    value={currentClass}
+                    onChange={(e) => setCurrentClass(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 outline-none appearance-none font-black text-slate-700 cursor-pointer border-none"
+                  >
+                    {[...Array(12)].map((_, i) => (
+                      <option key={i} value={i + 1}>
+                        Class {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={14}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        ))}
+
+          {/* Access Code Card */}
+          <div className="bg-primary text-white p-6 rounded-2xl flex flex-col justify-center items-center relative overflow-hidden shadow-xl shadow-primary/20 border-none">
+            <div className="absolute -top-2 -right-2 p-2 opacity-10">
+              <Layers size={100} />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-4 opacity-80">
+              Access Code
+            </p>
+            <div className="flex items-center gap-4 relative z-10">
+              <input
+                type="text"
+                value={roomCode}
+                onChange={(e) =>
+                  setRoomCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                }
+                className="bg-transparent text-3xl font-black tracking-widest font-mono border-b-2 border-white/30 focus:border-white outline-none w-40 text-center"
+              />
+              <button
+                onClick={generateRandomCode}
+                className="hover:rotate-180 transition-all bg-white/10 p-2 rounded-lg border-none shadow-inner"
+              >
+                <RefreshCw size={20} />
+              </button>
+            </div>
+            <p className="text-[9px] mt-4 opacity-60 font-black tracking-wider">
+              6-Digit Numerical Code
+            </p>
+          </div>
+        </div>
+
+        {/* Questions Section */}
+        <div className="space-y-6 mt-8">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="font-black text-slate-800 flex items-center gap-2 text-lg italic">
+              <CheckCircle2 className="text-primary" size={24} /> Questions
+            </h2>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-lg shadow-sm">
+              Total: {questions.length}
+            </span>
+          </div>
+
+          {questions.map((q, index) => (
+            <div
+              key={q.id}
+              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border-none overflow-hidden"
+            >
+              <div className="p-6 space-y-6">
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] font-black text-primary uppercase bg-primary/5 px-4 py-1 rounded-full">
+                    Question {index + 1}
+                  </span>
+                  <button
+                    onClick={() =>
+                      questions.length > 1 &&
+                      setQuestions(questions.filter((item) => item.id !== q.id))
+                    }
+                    className="text-slate-300 hover:text-red-500 transition-all p-1"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+                <textarea
+                  value={q.description}
+                  onChange={(e) =>
+                    setQuestions(
+                      questions.map((item) =>
+                        item.id === q.id
+                          ? { ...item, description: e.target.value }
+                          : item,
+                      ),
+                    )
+                  }
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 focus:bg-white focus:shadow-inner outline-none font-bold text-slate-800 text-sm border-none resize-none"
+                  placeholder="Type your question here..."
+                  rows="2"
+                ></textarea>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {['A', 'B', 'C', 'D'].map((label) => (
+                    <div
+                      key={label}
+                      className={`flex items-center rounded-xl px-4 py-2 transition-all ${q.correctAnswer === label ? 'bg-primary/10 shadow-sm' : 'bg-slate-50'}`}
+                    >
+                      <button
+                        onClick={() =>
+                          setQuestions(
+                            questions.map((item) =>
+                              item.id === q.id
+                                ? { ...item, correctAnswer: label }
+                                : item,
+                            ),
+                          )
+                        }
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black mr-3 transition-all ${q.correctAnswer === label ? 'bg-primary text-white shadow-lg' : 'bg-white text-slate-400 shadow-sm'}`}
+                      >
+                        {label}
+                      </button>
+                      <input
+                        value={q.options[label]}
+                        onChange={(e) =>
+                          setQuestions(
+                            questions.map((item) =>
+                              item.id === q.id
+                                ? {
+                                    ...item,
+                                    options: {
+                                      ...item.options,
+                                      [label]: e.target.value,
+                                    },
+                                  }
+                                : item,
+                            ),
+                          )
+                        }
+                        type="text"
+                        placeholder={`Option ${label}`}
+                        className="bg-transparent outline-none text-xs w-full font-bold text-slate-700 border-none"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <button
+            onClick={() =>
+              setQuestions([
+                ...questions,
+                {
+                  id: Date.now(),
+                  description: '',
+                  options: { A: '', B: '', C: '', D: '' },
+                  correctAnswer: '',
+                },
+              ])
+            }
+            className="w-full py-4 bg-white  border-dashed border-slate-200 rounded-2xl flex items-center justify-center gap-2 text-primary font-black text-[10px] uppercase hover:bg-primary/5 hover:border-primary transition-all shadow-sm"
+          >
+            <PlusCircle size={18} /> Add Next Question
+          </button>
+        </div>
+
+        <div className="mt-8 flex justify-end pb-10">
+          <button
+            onClick={handleCreateRoom}
+            className="px-10 py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95 border-none"
+          >
+            Publish Exam Room
+          </button>
+        </div>
       </div>
-    </div>
+    </TeacherRoute>
   );
 };
 

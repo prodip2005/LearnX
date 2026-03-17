@@ -21,6 +21,9 @@ import {
   X,
 } from 'lucide-react';
 import { TrendingUp } from 'lucide-react';
+import { UserCog } from 'lucide-react';
+import { Database } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
@@ -28,9 +31,42 @@ const DashboardSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false); // মোবাইলের জন্য
 
   const menuConfig = {
+    admin: [
+      {
+        name: 'Admin Panel',
+        href: '/dashboard/admin',
+        icon: <ShieldCheck size={20} />,
+      },
+      {
+        name: 'User Management',
+        href: '/dashboard/admin/users',
+        icon: <UserCog size={20} />,
+      },
+      {
+        name: 'All Exams',
+        href: '/dashboard/admin/all-exams',
+        icon: <FileText size={20} />,
+      },
+
+      // {
+      //   name: 'All Exams Results',
+      //   href: '/dashboard/admin/all-exams-results',
+      //   icon: <BarChart3 size={20} />,
+      // },
+      {
+        name: 'Teacher Controls',
+        href: '/dashboard/teacher/my-exams',
+        icon: <Briefcase size={20} />,
+      },
+      // {
+      //   name: 'Settings',
+      //   href: '/dashboard/admin/settings',
+      //   icon: <Settings size={20} />,
+      // },
+    ],
     teacher: [
       {
-        name: 'Dashboard',
+        name: 'Teacher Pannel',
         href: '/dashboard/teacher',
         icon: <LayoutDashboard size={20} />,
       },
@@ -49,15 +85,10 @@ const DashboardSidebar = () => {
         href: '/dashboard/teacher/students',
         icon: <Users size={20} />,
       },
-      {
-        name: 'Reports',
-        href: '/dashboard/teacher/reports',
-        icon: <BarChart3 size={20} />,
-      },
     ],
     student: [
       {
-        name: 'Dashboard',
+        name: 'Student Pannel',
         href: '/dashboard/student',
         icon: <LayoutDashboard size={20} />,
       },
@@ -70,11 +101,6 @@ const DashboardSidebar = () => {
         name: 'Progress',
         href: '/dashboard/student/progress',
         icon: <TrendingUp size={20} />,
-      },
-      {
-        name: 'Results',
-        href: '/dashboard/student/results',
-        icon: <BarChart3 size={20} />,
       },
     ],
   };

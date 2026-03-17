@@ -5,20 +5,24 @@ import { onAuthStateChanged } from 'firebase/auth';
 import Swal from 'sweetalert2';
 import {
   Trash2,
-  BookOpen,
   Layers,
   Calendar,
   ExternalLink,
   Loader2,
+  Hash,
+  Users,
+  Clock,
+  PlayCircle,
+  PauseCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import TeacherRoute from '@/components/TeacherRoute';
 
 const AllExamsByTheTeacher = () => {
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // ইউজারের লগইন স্ট্যাটাস এবং ডাটা ফেচ করা
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -31,10 +35,8 @@ const AllExamsByTheTeacher = () => {
     return () => unsubscribe();
   }, []);
 
-  // টিচারের ইমেইল দিয়ে এপিআই থেকে ডাটা আনা
   const fetchExams = async (email) => {
     try {
-      // পাথ আপনার এপিআই ডিরেক্টরি অনুযায়ী দেওয়া হয়েছে
       const res = await fetch(`/api/exams/create?email=${email}`);
       const data = await res.json();
       if (data.success) {
@@ -47,15 +49,46 @@ const AllExamsByTheTeacher = () => {
     }
   };
 
-  // এক্সাম ডিলিট করার ফাংশন
+  // এক্সাম স্ট্যাটাস টগল করার ফাংশন
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const newStatus = !currentStatus;
+      const res = await fetch(`/api/exams/create`, {
+        method: 'PATCH', // আপনার ব্যাকএন্ড অনুযায়ী PATCH বা PUT হতে পারে
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, exam: newStatus }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setExams(
+          exams.map((exam) =>
+            exam._id === id ? { ...exam, exam: newStatus } : exam,
+          ),
+        );
+
+        Swal.fire({
+          title: `Exam ${newStatus ? 'Activated' : 'Deactivated'}!`,
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      Swal.fire('Error', 'Failed to update status.', 'error');
+    }
+  };
+
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: 'This exam room will be deleted forever!',
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#64748b',
+      cancelButtonColor: '#94a3b8',
       confirmButtonText: 'Yes, delete it!',
     });
 
@@ -65,122 +98,132 @@ const AllExamsByTheTeacher = () => {
           method: 'DELETE',
         });
         const data = await res.json();
-
         if (data.success) {
           setExams(exams.filter((exam) => exam._id !== id));
-          Swal.fire('Deleted!', 'Exam room has been removed.', 'success');
+          Swal.fire('Deleted!', 'Exam room removed.', 'success');
         }
       } catch (error) {
-        Swal.fire('Error', 'Failed to delete. Try again.', 'error');
+        Swal.fire('Error', 'Failed to delete.', 'error');
       }
     }
   };
 
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <Loader2 className="animate-spin text-primary mb-2" size={32} />
-        <p className="text-slate-500 font-medium italic">
-          Loading your classrooms...
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+        <p className="text-slate-500 font-bold mt-6 uppercase text-xs">
+          Synchronizing Data...
         </p>
       </div>
     );
 
   return (
-    <div className="p-4 md:p-8 bg-[#f8fafc] min-h-screen">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
-            Teacher's Desk
-          </h1>
-          <p className="text-slate-500">
-            Manage and monitor all your created exam rooms.
-          </p>
-        </div>
-      </div>
-
-      {/* Exam Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {exams.map((exam) => (
-          <div
-            key={exam._id}
-            className="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group relative"
-          >
-            {/* Room Code Badge */}
-            <div className="absolute top-6 right-20 bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
-              Code: {exam.roomCode}
-            </div>
-
-            <div className="p-8 pb-0 flex justify-between items-start">
-              <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                <BookOpen size={28} />
-              </div>
-              <button
-                onClick={() => handleDelete(exam._id)}
-                className="p-2.5  text-red-300 hover:text-red-500 hover:bg-red-50 bg-red-50 rounded-xl transition-all"
-                title="Delete Room"
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
-
-            <div className="p-8">
-              <h3 className="text-xl font-black text-slate-800 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                {exam.examTitle}
-              </h3>
-              <p className="text-xs text-slate-400 font-bold mb-6 flex items-center gap-1 uppercase">
-                <Calendar size={14} /> Created:{' '}
-                {new Date(exam.createdAt).toLocaleDateString()}
-              </p>
-
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl mb-6">
-                <div className="text-center">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase">
-                    Class
-                  </p>
-                  <p className="font-black text-slate-700">
-                    {exam.targetClass}
-                  </p>
-                </div>
-                <div className="w-[1px] h-8 bg-slate-200" />
-                <div className="text-center">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase">
-                    Questions
-                  </p>
-                  <p className="font-black text-slate-700">
-                    {exam.questions?.length || 0}
-                  </p>
-                </div>
-              </div>
-
-              <button className="w-full py-4 bg-white text-slate-700 rounded-2xl font-black text-xs hover:bg-slate-900 hover:text-white transition-all border-2 border-slate-100 flex items-center justify-center gap-2 group/btn shadow-sm">
-                VIEW RESULTS{' '}
-                <ExternalLink
-                  size={14}
-                  className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform"
-                />
-              </button>
-            </div>
+    <TeacherRoute>
+      <div className="p-6 md:p-12 bg-[#fcfcfd] min-h-screen">
+        <div className="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+              Manage <span className="text-primary">Exams</span>
+            </h1>
+            <p className="text-slate-500 font-medium">
+              You have {exams.length} exam rooms created.
+            </p>
           </div>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {exams.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-            <Layers size={32} />
-          </div>
-          <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">
-            No exam rooms found
-          </p>
-          <p className="text-slate-400 text-xs mt-1">
-            Start by creating your first exam room.
-          </p>
         </div>
-      )}
-    </div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {exams.map((exam) => (
+            <div
+              key={exam._id}
+              className="group bg-white rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-all duration-500 flex flex-col shadow-sm"
+            >
+              <div className="p-8 pb-4">
+                <div className="flex justify-between items-start mb-6">
+                  {/* স্ট্যাটাস ব্যাজ */}
+                  <div
+                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${exam.exam ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${exam.exam ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}
+                    ></span>
+                    {exam.exam ? 'Active (Live)' : 'Inactive (Off)'}
+                  </div>
+
+                  <button
+                    onClick={() => handleDelete(exam._id)}
+                    className="w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-100"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div className="space-y-1 mb-6">
+                  <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
+                    <Hash size={12} /> {exam.roomCode}
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-800 line-clamp-1 group-hover:text-primary transition-colors">
+                    {exam.roomTitle}
+                  </h3>
+                </div>
+
+                {/* টগল বাটন */}
+                <button
+                  onClick={() => handleToggleStatus(exam._id, exam.exam)}
+                  className={`w-full flex items-center justify-center gap-3 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all mb-4 ${
+                    exam.exam
+                      ? 'bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white'
+                      : 'bg-green-50 text-green-600 hover:bg-green-600 hover:text-white'
+                  }`}
+                >
+                  {exam.exam ? (
+                    <>
+                      <PauseCircle size={18} /> Stop Exam
+                    </>
+                  ) : (
+                    <>
+                      <PlayCircle size={18} /> Start Exam
+                    </>
+                  )}
+                </button>
+
+                <div className="flex justify-between items-center text-slate-400 border-t border-slate-50 pt-4">
+                  <div className="flex items-center gap-1.5 text-xs font-bold">
+                    <Users size={14} /> {exam.questions?.length || 0} Qs
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs font-bold">
+                    <Clock size={14} /> {exam.duration}
+                  </div>
+                </div>
+              </div>
+              <div className="px-8 py-6 mt-auto bg-slate-50/50 rounded-b-[2rem]">
+                <Link
+                  href={`/dashboard/teacher/my-exams/exam-result?id=${exam._id}&room=${exam.roomCode}`}
+                  className="w-full flex items-center justify-center gap-2 py-4 bg-white hover:bg-slate-900 text-slate-900 hover:text-white border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all"
+                >
+                  View Results <ExternalLink size={14} />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {exams.length === 0 && (
+          <div className="max-w-2xl mx-auto text-center py-20 bg-white rounded-[3.5rem] border border-slate-100 shadow-sm">
+            <Layers size={40} className="mx-auto mb-4 text-primary" />
+            <h3 className="text-2xl font-black text-slate-800 mb-2">
+              No Exam Rooms Yet
+            </h3>
+            <Link
+              href="/dashboard/teacher/create-exam"
+              className="text-primary font-black uppercase text-xs tracking-widest hover:underline"
+            >
+              Create Now
+            </Link>
+          </div>
+        )}
+      </div>
+    </TeacherRoute>
   );
 };
 

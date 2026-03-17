@@ -1,5 +1,7 @@
 import { GraduationCap } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
+import Logo from './Logo';
 
 const Footer = () => {
   return (
@@ -10,7 +12,9 @@ const Footer = () => {
           {/* Logo Section */}
           <div className="flex items-center gap-2 text-white">
             <span className="material-symbols-outlined text-6xl font-bold">
-              <GraduationCap size={40} strokeWidth={2} />
+              {/* <GraduationCap size={40} strokeWidth={2} /> */}
+              {/* <Image src="/mainLogo.png" alt="Logo" width={40} height={40} /> */}
+              <Logo />
             </span>
             <span className="text-xl font-bold tracking-tight">LearnX</span>
           </div>
