@@ -4,6 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import { Loader2, Mail, Award, ChevronLeft, Search } from 'lucide-react';
 import Link from 'next/link';
 import TeacherRoute from '@/components/TeacherRoute';
+import { motion } from 'framer-motion';
+
 
 // ১. লজিক এবং UI একটি আলাদা কম্পোনেন্টে
 const ExamResultContent = () => {
